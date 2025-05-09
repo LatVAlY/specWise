@@ -23,4 +23,5 @@ class OpenAILlm:
         )
 
         print(completion.choices[0].message.content)
-    ## other llms methods
+        ## other llms methods
+        return "return"

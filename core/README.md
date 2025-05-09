@@ -2,7 +2,7 @@
 
 ## Starting 
 create .env file
-`touch .env`
+`cp local.env .env`
 Add your OPENROUTE_API_KEY to the .env
 
 activate envirnment
