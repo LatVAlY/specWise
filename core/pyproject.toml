@@ -2,14 +2,10 @@
 name = "specwise"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "abdel_latrache",email = "latreche.abdel.fr@gmail.com"}
-]
+authors = [{ name = "abdel_latrache", email = "latreche.abdel.fr@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = [
-    "openai (>=1.78.0,<2.0.0)"
-]
+dependencies = ["openai (>=1.78.0,<2.0.0)"]
 
 
 [build-system]
