@@ -1,5 +1,18 @@
 # 🚀 Koch Service Specification Transformer
 
+## Starting 
+create .env file
+`touch .env`
+Add your OPENROUTE_API_KEY to the .env
+
+activate envirnment
+`poetry env activate`
+
+install dependencies
+`poetry install`
+
+
+
 ## The Digital Alchemist's Quest
 
 *Where PDFs become gold*  
