@@ -1,6 +1,7 @@
 
 from core.app.services.processing.data_processing import DataProcessingService
 from core.app.processing.vectore_client import VectoreDatabaseClient, url as qdrant_url
+from app.services.processing.data_processing import DataProcessingService
 
 
 class Pipelines:

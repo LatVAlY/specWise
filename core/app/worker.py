@@ -12,7 +12,7 @@ config = {
 rabbitmq_address = config['RABBITMQ_ADDRESS']
 rabbitmq_user = config['RABBITMQ_DEFAULT_USER']
 rabbitmq_password = config['RABBITMQ_DEFAULT_PASS']
-redis_backend = config['REDIS_CONNECTI§ON_STRING']
+redis_backend = config['REDIS_CONNECTION_STRING']
 celery_broker = f"amqp://{rabbitmq_user}:{rabbitmq_password}@{rabbitmq_address}/"
 
 app = Celery(

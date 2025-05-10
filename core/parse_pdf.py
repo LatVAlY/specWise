@@ -4,7 +4,7 @@ import json
 import os
 import requests
 
-from core.app.services.processing.data_processing import DataProcessing
+from app.services.processing.data_processing import DataProcessing
 
 
 # api_key = os.getenv("OPENROUTER_API_KEY")
