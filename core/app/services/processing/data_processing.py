@@ -18,7 +18,7 @@ class DataProcessingService:
                     lines.append(element.get_text())
             pages.append("\n".join(lines))
         return pages
-    
+
     def get_page_windows(self, pages, window_size=2):
         """
         Yields joined page text in overlapping windows, with page headers.
