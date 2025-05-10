@@ -7,6 +7,9 @@ from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import DuplicateKeyError, PyMongoError
 from app.envirnoment import config
 
+import logging
+
+logger = logging.getLogger(__name__)
 class PyObjectId(ObjectId):
     """Custom type for handling MongoDB's ObjectId"""
     @classmethod
@@ -79,14 +82,14 @@ class MongoDBService:
         except Exception as e:
             raise Exception(f"Failed to insert task: {str(e)}")
     
-    def update_task_status(self, task_id: UUID, status: TaskStatus, additional_info: Optional[str] = None) -> TaskDto:
+    def update_task_status(self, task_id: UUID, status: TaskStatus, description: Optional[str] = None) -> TaskDto:
         """
         Update the status of a task
         
         Args:
             task_id: UUID of the task to update
             status: New TaskStatus value
-            additional_info: Optional additional information to update
+            description: Optional additional information to update
             
         Returns:
             Updated TaskDto
@@ -100,8 +103,8 @@ class MongoDBService:
                 "updatedAt": int(datetime.now().timestamp() * 1000)
             }
             
-            if additional_info is not None:
-                update_dict["additionalInfo"] = additional_info
+            if description is not None:
+                update_dict["description"] = description
             
             result = self.tasks_collection.find_one_and_update(
                 {"id": str(task_id)},
@@ -215,15 +218,15 @@ class MongoDBService:
                 items_dict = []
                 for item in file_dict["items"]:
                     item_dict = {
-                        "sku": item.sku,
-                        "name": item.name,
-                        "text": item.text,
-                        "quantity": item.quantity,
-                        "quantityunit": item.quantityunit,
-                        "price": item.price,
-                        "priceunit": item.priceunit,
-                        "commission": item.commission,
-                        "confidence": item.confidence
+                        "sku": item["sku"],
+                        "name": item["name"],
+                        "text": item["text"],
+                        "quantity": item["quantity"],
+                        "quantityunit": item["quantityunit"],
+                        "price": item["price"],
+                        "priceunit": item["priceunit"],
+                        "commission": item["commission"],
+                        "confidence": item["confidence"]
                     }
                     
                     items_dict.append(item_dict)
@@ -258,19 +261,16 @@ class MongoDBService:
             items_dict = []
             for item in items:
                 item_dict = {
-                    "ref_no": item.ref_no,
-                    "description": item.description,
+                    "sku": item.sku,
+                    "name": item.name,
+                    "text": item.text,
                     "quantity": item.quantity,
-                    "unit": item.unit,
+                    "quantityunit": item.quantityunit,
+                    "price": item.price,
+                    "priceunit": item.priceunit,
+                    "commission": item.commission,
+                    "confidence": item.confidence
                 }
-                
-                if item.classification_item:
-                    item_dict["classification_item"] = {
-                        "classification": item.classification_item.classification,
-                        "confidence": item.classification_item.confidence,
-                        "match": item.classification_item.match,
-                        "relevant": item.classification_item.relevant
-                    }
                 
                 items_dict.append(item_dict)
             
@@ -292,7 +292,7 @@ class MongoDBService:
             return self._document_to_file_model(result)
         except Exception as e:
             raise Exception(f"Failed to update file items: {str(e)}")
-    
+
     def update_xml_content(self, file_id: UUID, xml_content: str) -> FileModel:
         """
         Update the XML content for a file
@@ -341,11 +341,16 @@ class MongoDBService:
         Raises:
             Exception: If file not found
         """
-        file_doc = self.files_collection.find_one({"id": str(file_id)})
-        if not file_doc:
-            raise Exception(f"File with ID {file_id} not found")
+        try:
+            file_doc = self.files_collection.find_one({"id": str(file_id)})
+            if not file_doc:
+                raise Exception(f"File with ID {file_id} not found")
+            return self._document_to_file_model(file_doc)
+        except PyMongoError as e:
+            raise Exception(f"Failed to retrieve file: {str(e)}")
+        except Exception as e:
+            raise Exception(f"Failed to retrieve file: {str(e)}")
         
-        return self._document_to_file_model(file_doc)
     
     def get_files_by_customer(self, customer_number: str) -> List[FileModel]:
         """

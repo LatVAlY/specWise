@@ -35,12 +35,13 @@ export function TasksDrawer() {
           task.status !== TaskStatus.COMPLETED &&
           task.status !== TaskStatus.FAILED &&
           task.status !== TaskStatus.CANCELED
+         
         ) {
           fetch(`${API_BASE_URL}/tasks/task/${task.id}/status`)
             .then((res) => res.json())
             .then((data) => {
-              if (data.task && data.task.status !== task.status) {
-                updateTask(task.id, { status: data.task.status })
+              if (data.task && data.task.status !== task.status || (task.data && data.task.description !== task.description)) {
+                updateTask(task.id, { status: data.task.status, description: data.task.description })
 
                 if (data.task.status === TaskStatus.COMPLETED) {
                   toast({

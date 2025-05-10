@@ -1,7 +1,7 @@
 import logging
 import os
 from typing import List
-from uuid import UUID
+import uuid
 from app.services.processing.data_processing import DataProcessingService
 
 from app.services.processing.data_processing import DataProcessingService
@@ -65,22 +65,19 @@ class Pipelines:
             logger.info(f"Starting data processing for file: {file_path}")
 
             self.mongoDbService.update_task_status(
-                task_id=UUID(task_id),
+                task_id=uuid.UUID(task_id),
                 status=TaskStatus.in_progress,
             )
             logger.info(f"Task {task_id} marked as in progress")
 
             pages = self.data_processing_service.extract_pages_as_text(file_path)
-            logger.info(f"Extracted {len(pages)} pages from the file")
 
-            parsed_items = self.data_processing_service.process_data(pages)
-            logger.info(f"Parsed {len(parsed_items)} items from document")
+            parsed_items = self.data_processing_service.process_data(pages, task_id=task_id)
 
-            items_dto: List[ItemDto] = self.llm_service.categorize(parsed_items)
-            logger.info(f"LLM categorized {len(items_dto)} items")
+            items_dto: List[ItemDto] = self.llm_service.categorize(parsed_items, task_id)
 
             file = FileModel(
-                id=UUID.uuid4(),
+                id=uuid.uuid4(),
                 filename=filename,
                 filepath=file_path,
                 customer_number=user_id,
@@ -90,11 +87,11 @@ class Pipelines:
             self.mongoDbService.insert_file(file_model=file)
             logger.info(f"Inserted file record into MongoDB: {file.id}")
 
-            self.vector_db_repo.store_data(user_id, collection_id, parsed_items)
+            # self.vector_db_repo.store_data(user_id, collection_id, parsed_items)
             logger.info(f"Stored parsed items in vector database under collection {collection_id}")
 
             self.mongoDbService.update_task_status(
-                task_id=UUID(task_id),
+                task_id=uuid.UUID(task_id),
                 status=TaskStatus.completed,
             )
             logger.info(f"Task {task_id} marked as completed")
@@ -110,7 +107,7 @@ class Pipelines:
         except Exception as e:
             logger.error(f"Error processing data for task {task_id}: {e}", exc_info=True)
             self.mongoDbService.update_task_status(
-                task_id=UUID(task_id),
+                task_id=uuid.UUID(task_id),
                 status=TaskStatus.failed,
             )
             return {

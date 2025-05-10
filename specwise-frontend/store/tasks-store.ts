@@ -29,7 +29,6 @@ export const useTasksStore = create<TasksState>((set) => ({
     }),
   removeTask: (taskId) =>
     set((state) => {
-      console.log("Removing task with ID:", taskId);
       return {
         activeTasks: state.activeTasks.filter((task) => task.id !== taskId),
       };

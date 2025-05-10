@@ -32,32 +32,25 @@ export function useFilesByTask(taskId: string) {
   })
 }
 
-export function useUpdateItemClassification() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({
-      fileId,
-      refNo,
-      data,
-    }: {
-      fileId: string
-      refNo: string
-      data: { match: boolean; relevant: boolean }
-    }) => filesApi.updateItemClassification(fileId, refNo, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["file", variables.fileId] })
-    },
-  })
-}
-
 export function useGenerateXml() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (fileId: string) => filesApi.generateXml(fileId),
-    onSuccess: (_, fileId) => {
-      queryClient.invalidateQueries({ queryKey: ["file", fileId] })
+    mutationFn: ({ fileId, itemIds }: { fileId: string; itemIds: string[] }) =>
+      filesApi.generateXml(fileId, itemIds),
+    onSuccess: (_, { fileId }) => {
+      queryClient.invalidateQueries({ queryKey: ["file", fileId] });
+      queryClient.invalidateQueries({ queryKey: ["files"] });
+    },
+  })
+}
+
+export function useDeleteFile() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (fileId: string) => filesApi.deleteFile(fileId),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["files"] })
     },
   })

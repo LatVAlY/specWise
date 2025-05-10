@@ -1,13 +1,17 @@
 from typing import List
-from app.models.models import ItemDto, ItemChunkDto
+from uuid import UUID
+from app.models.models import ItemDto, ItemChunkDto, TaskStatus
 from app.services.llm.llm import OpenAILlmService
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextContainer
+
+from app.services.mongo_db import MongoDBService
 
 
 class DataProcessingService:
     def __init__(self):
         self.llm_service = OpenAILlmService()
+        self.mongoDbService = MongoDBService()
 
     def extract_pages_as_text(self, pdf_path: str):
         pages = []
@@ -31,10 +35,15 @@ class DataProcessingService:
                 chunk += f"\n\n### PAGE {page_num}\n{pages[i + j]}"
             yield (i, chunk)
 
-    def process_data(self, pages):
+    def process_data(self, pages, task_id):
         parsed_items: List[ItemChunkDto] = []
         for i, page_window in self.get_page_windows(pages, window_size=2):
             print(f"🧠 Parsing pages {i+1}-{i+2} / {len(pages)}")
+            self.mongoDbService.update_task_status(
+                task_id=UUID(task_id),
+                status=TaskStatus.in_progress,
+                description=f"Parsing pages {i+1}-{i+2} / {len(pages)}",
+            )
             try:
                 response: List[ItemChunkDto] = self.llm_service.parse_page_with_llm(
                     page_window
