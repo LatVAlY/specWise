@@ -1,10 +1,13 @@
 
-from core.app.services.llm.prompts import CATEGORIZATION_PROMPT
+import json
+from typing import List
+from core.app.models.models import ItemDto
+from core.app.services.llm.prompts import CATEGORIZATION_PROMPT, SYSTEM_PROMPT_LLM_CHUNKING
 from envirnoment import config
 from openai import OpenAI
 
 
-class OpenAILlm:
+class OpenAILlmService:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.openaiClient = OpenAI(
@@ -23,5 +26,28 @@ class OpenAILlm:
         )
 
         print(completion.choices[0].message.content)
-        ## other llms methods
+
         return "return"
+
+    def parse_page_with_llm(self, page_text, model="openai/gpt-4o-mini") -> ItemDto:
+
+        completion = self.openaiClient.chat.completions.create(
+            model=model,
+            max_tokens=4096,
+            temperature=0,
+            response_format={"type": "json_object"},
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT_LLM_CHUNKING},
+                {"role": "user", "content": page_text},
+            ],
+        )
+        if completion.status_code != 200:
+            raise Exception(
+                f"OpenRouter API error {completion.status_code}: {completion.text}"
+            )
+        content = completion.choices[0].message.content
+        data = json.loads(content)
+        items = data.get("items", [])
+        parsed_items = [ItemDto().from_dict(item) for item in items]
+        return parsed_items
+        
