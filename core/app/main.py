@@ -48,18 +48,6 @@ async def lifespan(app: FastAPI):
     # await rabbitmq.disconnect()
 
 
-app = FastAPI(title="SPECWISE", version="0.0.1", lifespan=lifespan)
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
 def create_app() -> FastAPI:
     """
     Create and configure the FastAPI application
