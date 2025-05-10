@@ -4,7 +4,7 @@ import json
 import os
 import requests
 
-from app.services.processing.data_processing import DataProcessing
+# from core.app.services.processing.data_processing import DataProcessing
 
 
 # api_key = os.getenv("OPENROUTER_API_KEY")
@@ -19,12 +19,12 @@ from app.services.processing.data_processing import DataProcessing
 # - A free-text description (can span multiple lines)
 # - A quantity (Menge) with unit, e.g., "1.000 Stk", "15 h", or "80,5 m²"
 
-# The reference number can be in many different formats, 
+# The reference number can be in many different formats,
 # if you think something can be a reference number then be conservative and generate the item.
 # Missing an item is much worse than having an extra item.
 
 # Do not ignore descriptions which start with or contain:
-# - Symbols such as ***, ---, - etc. 
+# - Symbols such as ***, ---, - etc.
 # - Words such as Bedarfsposition or Alternativpostion
 
 # Pay special attention to German number formatting:
@@ -111,11 +111,6 @@ from app.services.processing.data_processing import DataProcessing
 #     return json.loads(data["choices"][0]["message"]["content"])
 
 
-example_num = 2
-test_pdf_path = (
-    f"app/docs/data-for-participants/Example-{example_num}/service-specification.pdf"
-)
-
 # if __name__ == "__main__":
 #     pages = extract_pages_as_text(test_pdf_path)
 #     parsed_items = []
@@ -150,10 +145,189 @@ test_pdf_path = (
 #         json.dump(final_items, f, ensure_ascii=False, indent=2)
 
 
+def expand_referenced_descriptions(items, api_key, model="openai/gpt-4o-mini"):
+    """
+    Takes a list of parsed Leistungsverzeichnis items, finds internal references like "wie Pos. X",
+    and adds a new field 'referenced_description' using an LLM via OpenRouter.
+    """
+
+    SYSTEM_PROMPT = """
+    You are refining data from a German service specification (Leistungsverzeichnis).
+
+    Each item has a `ref_no`, a `description`, and possibly references to another item via phrases like:
+    - "wie Pos. 10"
+    - "siehe Pos. 1.2.35"
+    - "entspricht Pos. X"
+
+    Your task:
+    - For each `target_item`, if a reference is detected in its description, set a new field: `references_id`
+    - The value of `references_id` must exactly match a `ref_no` that appears in the full `all_items` list
+
+    Only modify `target_items`. Do not add, remove, or reorder items.
+    If no valid reference is found, omit the `references_id` field.
+
+    Return ONLY the modified `target_items` list, using this schema:
+    [
+    {
+        "ref_no": "string",
+        "description": "string",
+        "quantity": float,
+        "unit": "string",
+        "references_id": "string (optional)"
+    },
+    ...
+    ]
+
+    Strictly output only valid JSON — no extra text, no markdown, no commentary.
+    """
+
+    # OpenRouter endpoint and headers
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "specwise-reference-expander",
+    }
+
+    # Build request payload
+    payload = {
+        "model": model,
+        "response_format": {"type": "json_object"},
+        "temperature": 0,
+        "max_tokens": 4096,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": json.dumps({"items": items}, ensure_ascii=False),
+            },
+        ],
+    }
+
+    # Make the request
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+    # Handle errors
+    if response.status_code != 200:
+        raise Exception(f"OpenRouter API error {response.status_code}: {response.text}")
+
+    # Parse response
+    data = response.json()
+    return data["choices"][0]["message"]["content"]
+
+
+def chunk_list(lst, size=10):
+    """Yield successive `size`-sized chunks from list `lst`."""
+    for i in range(0, len(lst), size):
+        yield lst[i : i + size]
+
+
+SYSTEM_PROMPT = """
+You are refining a single item from a German service specification document (Leistungsverzeichnis).
+
+Each item has:
+- a `ref_no` (like "01.1" or "1.2.35")
+- a `description` that might reference another position using text like:
+  - "wie Pos. X"
+  - "siehe Pos. X"
+  - "entspricht Pos. X"
+
+Your task:
+- Check the `description` of the current `target_item`.
+- If it clearly refers to a position in the `all_items` list, match the reference to the corresponding `ref_no`.
+- Add a new field to the item: `"references_id"` with the matched `ref_no`.
+
+Only modify the given `target_item`.
+
+Return a **single JSON object** using this schema:
+
+{
+  "ref_no": "string",
+  "description": "string",
+  "quantity": float,
+  "unit": "string",
+  "references_id": "string (optional)"
+}
+
+Strictly return only JSON — no markdown, no commentary.
+"""
+
+
+def resolve_single_item(item, all_items, api_key, model="openai/gpt-4o-mini"):
+
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "http://localhost:3000",
+        "X-Title": "specwise-ref-id-single",
+    }
+
+    payload = {
+        "model": model,
+        "temperature": 0,
+        "response_format": {"type": "json_object"},
+        "max_tokens": 2048,
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": json.dumps(
+                    {"target_item": item, "all_items": all_items}, ensure_ascii=False
+                ),
+            },
+        ],
+    }
+
+    response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+    if response.status_code != 200:
+        raise Exception(f"OpenRouter API error {response.status_code}: {response.text}")
+
+    raw = response.json()["choices"][0]["message"]["content"]
+
+    # Clean and parse
+    trimmed = raw.strip()
+    try:
+        return json.loads(trimmed)
+    except json.JSONDecodeError as e:
+        print("❌ Failed to parse response:\n", trimmed[:500])
+        raise e
+
+
+def resolve_all_items_one_by_one(items, api_key):
+    updated = []
+
+    for i, item in enumerate(items):
+        print(f"🔍 Resolving item {i+1}/{len(items)}: {item['ref_no']}")
+        try:
+            new_item = resolve_single_item(item, items, api_key)
+            updated.append(new_item)
+        except Exception as e:
+            print(f"⚠️ Skipping item {item['ref_no']} due to error: {e}")
+            updated.append(item)  # fallback to original
+
+    return updated
+
+
+api_key = os.getenv("OPENROUTER_API_KEY")
+example_num = 2
+test_pdf_path = (
+    f"app/docs/data-for-participants/Example-{example_num}/service-specification.pdf"
+)
+
 if __name__ == "__main__":
-    data_processing = DataProcessing()
+    # data_processing = DataProcessing()
 
-    data = data_processing.process_data(test_pdf_path)
+    # data = data_processing.process_data(test_pdf_path)
 
-    with open(f"parsed_items_example_{example_num}.json", "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    with open(f"parsed_items_example_{example_num}.json", "r", encoding="utf-8") as f:
+        items = json.load(f)
+
+    data_expanded = resolve_all_items_one_by_one(items, api_key=api_key)
+
+    with open(
+        f"parsed_items_example_{example_num}_expanded.json", "w", encoding="utf-8"
+    ) as f:
+        json.dump(data_expanded, f, ensure_ascii=False, indent=2)
