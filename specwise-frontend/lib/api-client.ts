@@ -17,7 +17,7 @@ async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise
     throw new Error(`API error: ${response.status} ${response.statusText}`)
   }
 
-  return response.json()
+  return response.json() as any
 }
 
 // Files API

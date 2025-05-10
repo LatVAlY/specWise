@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "SPECWISE File Processor",
   description: "Process and manage files with SPECWISE",
-    generator: 'v0.dev'
+  generator: 'specwise',
 }
 
 export default function RootLayout({
@@ -21,9 +21,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light">
+        <ThemeProvider attribute="class" defaultTheme="system">
           <QueryProvider>
             <div className="relative min-h-screen">
               <TasksDrawer />
