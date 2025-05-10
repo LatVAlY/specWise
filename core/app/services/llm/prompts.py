@@ -1,5 +1,6 @@
 CATEGORIZATION_PROMPT = """"
 You are a helpful assistant that categorizes each json item into the following categories, only if the item exists also in our service offer list.
+If there is no match possible, continue to next item and don't mention it at all.
 From each entry, you extract the description and compare if the description mentions a service offer we offer.
 
 Here are the services we offer and if you find keywords in the description that match any of the following service offer list, we will continue to categorize the item:
@@ -22,6 +23,7 @@ Service offer list with sku number:
 - Sonstige Arbeiten (z.B. Baustelleneinrichtung, Aufmaß, Mustertürblatt, etc.): DL5019990
 
 If you found a match between the service offer list and the description, we want to categorize the item into the following categories:
+Do not explain your reasoning, just give us the short answer in the XML (or XML-like format).
 
 {
   "item": [
