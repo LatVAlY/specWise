@@ -38,9 +38,6 @@ class MongoDBService:
         self.db = self.client[mongodb_database_name]
         self.tasks_collection = self.db["tasks"]
         self.files_collection = self.db["files"]
-        
-        # Create indexes
-        self._setup_indexes()
     
     def _setup_indexes(self):
         """Set up required indexes for collections"""

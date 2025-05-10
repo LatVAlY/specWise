@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.concurrency import asynccontextmanager
 from app.handlers.files import fileRouter
 from app.handlers.data import dataRouter
+from app.handlers.task import taskRouter
 from app.services.mongo_db import MongoDBService
 from app.envirnoment import config
 
@@ -67,6 +68,7 @@ def create_app() -> FastAPI:
 
     app.include_router(fileRouter)
     app.include_router(dataRouter)
+    app.include_router(taskRouter)
 
     return app
 

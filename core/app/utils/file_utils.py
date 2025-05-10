@@ -1,6 +1,8 @@
 import logging
 from pathlib import Path
 
+import pytz
+from datetime import datetime
 from fastapi import UploadFile
 from app.constants import PROCESSING_FILE_PATH
 
@@ -29,3 +31,9 @@ def save_file(file: UploadFile):
         f.write(file.file.read())
     logger.info(f"Saved file to {file_path}")
     return file_path
+
+
+
+def get_current_time_in_timezone():
+    tz = pytz.timezone('Europe/Paris')
+    return int(datetime.now(tz).timestamp() * 1000)

@@ -14,23 +14,19 @@ class TaskStatus(str, Enum):
     updating = "UPDATING"
 class TaskDto(BaseModel):
     id: UUID
-    type: str
     collection_id: UUID
-    description: str
-    additional_info: Union[str, None]
+    description: Optional[str] = None
     file_name: Union[str, None]
     status: TaskStatus
-    created_at: int
-    updated_at: Union[int, None]
+    created_at: Optional[int] = None
+    updated_at: Optional[int] = None
 
 
     def to_dict(self):
         return {
             "id": self.id,
-            "type": self.type,
             "collectionId": self.collection_id,
             "description": self.description,
-            "additionalInfo": self.additional_info,
             "fileName": self.file_name,
             "status": self.status,
             "createdAt": self.created_at,
