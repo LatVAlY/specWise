@@ -25,7 +25,7 @@ class OpenAILlmService:
                 model="openai/gpt-4o-mini",
                     messages=[
                     {
-                        "role": "user",
+                        "role": "system",
                         "content": CATEGORIZATION_PROMPT
                     },
                     {

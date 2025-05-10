@@ -3,28 +3,29 @@
     "ref_no": "04.01",
     "description": "Holz-Türblatt für Stahl-Umfassungszarge",
     "quantity": 1,
-    "unit": "Stk"
+    "unit": "Stk",
+    "references_id": "04.01"
   },
   {
     "ref_no": "04.02",
     "description": "Beschläge für Türblätter",
     "quantity": 1,
     "unit": "Stk",
-    "references_id": "02"
+    "references_id": "04.01"
   },
   {
     "ref_no": "04.03",
     "description": "Stundenlohnarbeiten",
     "quantity": 1,
     "unit": "h",
-    "references_id": "04.01.1"
+    "references_id": "04.02"
   },
   {
     "ref_no": "01",
     "description": "Holz-Türblatt für Stahl-Umfassungszarge",
     "quantity": 1,
     "unit": "Stk",
-    "references_id": "01"
+    "references_id": "04.01"
   },
   {
     "ref_no": "02",
@@ -45,7 +46,7 @@
     "description": "Türelement 875 x 2.125 mm\nLiefern und Einbauen von Innentür-Elementen gemäß vorstehender Beschreibung.\nElementgröße für Richtmaß:\n875 x 2.125 mm\nAngebotenes Fabrikat/Typ:\n'.........'",
     "quantity": 140,
     "unit": "St",
-    "references_id": "01.1"
+    "references_id": "01"
   },
   {
     "ref_no": "01.2",
@@ -80,14 +81,14 @@
     "description": "HPL-Beschichtung\nZZ:001.1\nAlternativposition für Oberflächen:\nalle Türblätter der vorstehenden Positionen (01.1 - 01.5) mit HPL-Beschichtung. HPL-Beschichtung\nZZ:001.1\nAlternativposition für Oberflächen:\nalle Türblätter der vorstehenden Positionen (01.1 - 01.5)\nmit HPL-Beschichtung.",
     "quantity": 228,
     "unit": "St",
-    "references_id": "01.1"
+    "references_id": "01.5"
   },
   {
     "ref_no": "02.1",
     "description": "Beschläge für Zimmertüren\nbestehend aus:\n- Buntbart-Einsteckschloss, Klasse 1, 1-tourig, je 1 Schlüssel\n- Edelstahl-Rosettengarnitur\nTürdrücker:\nFSB 1076, Edelstahl feimatt gebürstet o.glw.\nAngebotenes Produkt:\n'.........' Beschläge für Zimmertüren\nbestehend aus:\n- Buntbart-Einsteckschloss, Klasse 1, 1-tourig, je 1 Schlüssel\n- Edelstahl-Rosettengarnitur\n\nTürdrücker:\nFSB 1076, Edelstahl feimatt gebürstet o.glw.",
     "quantity": 133.0,
     "unit": "St",
-    "references_id": "02.1"
+    "references_id": "02"
   },
   {
     "ref_no": "02.2",
@@ -108,27 +109,27 @@
     "description": "Türstopper\nTürstopper für Wandbefestigung für alle Türen.\n- Farbe: weiß\n- Material: Kunststoff\n- ø ca. 40 mm\n\nBummsinchen o.glw. Türstopper für Wandbefestigung für alle Türen.\n- Farbe: weiß\n- Material: Kunststoff\n- ø ca. 40 mm\n\nBummsinchen o.glw.\n\nAngebotenes Produkt:\n'.........'",
     "quantity": 228,
     "unit": "St",
-    "references_id": null
+    "references_id": "02.3"
   },
   {
     "ref_no": "04.01.1",
     "description": "Polier/-in sämtliche Kosten/Zuschläge\nStundenlohnarbeiten durch Polier/-in\nder Verrechnungssatz für die jeweilige Arbeitskraft umfasst\nsämtliche Aufwendungen wie Lohn- und Gehaltskosten, Lohn-\nund Gehaltsnebenkosten, Zuschläge, lohngebundene und\nlohnabhängige Kosten, sonstige Sozialkosten, Gemeinkosten,\nWagnis und Gewinn.",
     "quantity": 15,
     "unit": "h",
-    "references_id": "04.01.1"
+    "references_id": "04.01"
   },
   {
     "ref_no": "04.01.2",
     "description": "Stundenlohnarbeiten durch Facharbeiter/-in\nder Verrechnungssatz für die jeweilige Arbeitskraft umfasst\nsämtliche Aufwendungen wie Lohn- und Gehaltskosten, Lohn-\nund Gehaltsnebenkosten, Zuschläge, lohngebundene und\nlohnabhängige Kosten, sonstige Sozialkosten, Gemeinkosten,\nWagnis und Gewinn. Facharbeiter/-in sämtliche Kosten/Zuschläge\nStundenlohnarbeiten durch Facharbeiter/-in\nder Verrechnungssatz für die jeweilige Arbeitskraft umfasst\nsämtliche Aufwendungen wie Lohn- und Gehaltskosten, Lohn-\nund Gehaltsnebenkosten, Zuschläge, lohngebundene und\nlohnabhängige Kosten, sonstige Sozialkosten, Gemeinkosten,\nWagnis und Gewinn.",
     "quantity": 40,
     "unit": "h",
-    "references_id": "04.03"
+    "references_id": "04.01.1"
   },
   {
     "ref_no": "04.01.3",
     "description": "Stundenlohnarbeiten durch Bauhelfer/-in\nder Verrechnungssatz für die jeweilige Arbeitskraft umfasst\nsämtliche Aufwendungen wie Lohn- und Gehaltskosten, Lohn-\nund Gehaltsnebenkosten, Zuschläge, lohngebundene und\nlohnabhängige Kosten, sonstige Sozialkosten, Gemeinkosten,\nWagnis und Gewinn. Bauhelfer/-in sämtliche Kosten/Zuschläge\nStundenlohnarbeiten durch Bauhelfer/-in\nder Verrechnungssatz für die jeweilige Arbeitskraft umfasst\nsämtliche Aufwendungen wie Lohn- und Gehaltskosten, Lohn-\nund Gehaltsnebenkosten, Zuschläge, lohngebundene und\nlohnabhängige Kosten, sonstige Sozialkosten, Gemeinkosten,\nWagnis und Gewinn.",
     "quantity": 15,
     "unit": "h",
-    "references_id": "04.01.3"
+    "references_id": "04.01.2"
   }
 ]

@@ -234,9 +234,24 @@ Each item has:
   - "entspricht Pos. X"
 
 Your task:
-- Check the `description` of the current `target_item`.
-- If it clearly refers to a position in the `all_items` list, match the reference to the corresponding `ref_no`.
-- Add a new field to the item: `"references_id"` with the matched `ref_no`.
+- Examine the `description` of `target_item` carefully.
+- If it contains a clear and explicit reference to another position listed in `all_items`, extract the corresponding `ref_no`.
+- Only extract references if the wording is **specific and unambiguous**.
+- In cases like `"wie Pos. 10"` (without a full `ref_no`), match the closest item in `all_items` **above** the target_item whose `ref_no` ends in `.10` or `10`. 
+  Examples:
+
+  (i)
+  1.2.30: Wie Pos 10.
+  Should map to 1.2.10 and NOT 1.1.10.
+
+  (ii)
+  1.4.40: Wie Pos 25.
+  Should map to 1.4.25 and NOT 1.2.25.
+
+- If the description includes `"wie Vorposition"` then the ref_no is the one of the item directly before the target_item in the all_items list,
+  do **not** populate a reference unless the intent is absolutely clear.
+- If the item appears to be a supplement (e.g., "Zulage", or an add-on to another item), skip adding a reference even if a reference-like phrase is present.
+- If a valid reference is found, add a new field: `"references_id"` with the matched `ref_no` as its value.
 
 Only modify the given `target_item`.
 
@@ -251,6 +266,7 @@ Return a **single JSON object** using this schema:
 }
 
 Strictly return only JSON — no markdown, no commentary.
+Ensure all quotes and braces are properly closed.
 """
 
 
@@ -312,7 +328,7 @@ def resolve_all_items_one_by_one(items, api_key):
 
 
 api_key = os.getenv("OPENROUTER_API_KEY")
-example_num = 2
+example_num = 1
 test_pdf_path = (
     f"app/docs/data-for-participants/Example-{example_num}/service-specification.pdf"
 )
