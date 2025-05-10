@@ -42,6 +42,26 @@ def get_db_service():
     return MongoDBService()
 
 
+#  get all tasks
+@taskRouter.get("/", response_model=List[TaskDto])
+async def get_all_tasks(
+    db: MongoDBService = Depends(get_db_service),
+):
+    """
+    Get all tasks in the system
+    """
+    try:
+        logger.info("Retrieving all tasks")
+        tasks = db.get_all_tasks()
+        logger.info(f"Retrieved {len(tasks)} tasks")
+        return tasks
+    except Exception as e:
+        logger.error(f"Error retrieving tasks: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving tasks: {str(e)}",
+        )
+
 @taskRouter.get("/task/{task_id}/status", response_model=TaskResponse)
 async def get_task_status(
     task_id: UUID = Path(..., description="UUID of the task to check status"),

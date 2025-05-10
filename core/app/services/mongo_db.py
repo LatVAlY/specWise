@@ -117,6 +117,15 @@ class MongoDBService:
         except Exception as e:
             raise Exception(f"Failed to update task status: {str(e)}")
     
+    def get_all_tasks(self) -> List[TaskDto]:
+        """
+        Get all tasks in the database
+        Returns:
+            List of TaskDto objects
+        """
+        cursor = self.tasks_collection.find()
+        return [self._document_to_task_dto(doc) for doc in cursor]
+
     def get_task_by_id(self, task_id: UUID) -> TaskDto:
         """
         Get a task by its ID
@@ -457,10 +466,8 @@ class MongoDBService:
         # Handle specific field mappings between MongoDB and TaskDto
         task_dict = {
             "id": UUID(doc["id"]),
-            "type": doc["type"],
             "collection_id": UUID(doc["collectionId"]),
             "description": doc["description"],
-            "additional_info": doc.get("additionalInfo"),
             "file_name": doc.get("fileName"),
             "status": TaskStatus(doc["status"]),
             "created_at": doc["createdAt"],
