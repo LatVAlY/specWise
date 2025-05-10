@@ -7,21 +7,16 @@ export enum TaskStatus {
   UPDATING = "UPDATING",
 }
 
-export interface ClassificationItem {
-  classification: string
-  confidence: number
-  match: boolean
-  relevant: boolean
-  [key: string]: any
-}
-
 export interface ItemDto {
-  ref_no: string
-  description: string
+  sku: string
+  name: string
+  text: string
   quantity: number
-  unit: string
-  classification_item?: ClassificationItem
-  [key: string]: any
+  quantityunit: string
+  price: number
+  priceunit: string
+  commission: string
+  confidence: number
 }
 
 export interface FileModel {

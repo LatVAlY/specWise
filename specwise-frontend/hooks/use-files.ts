@@ -9,11 +9,19 @@ export function useAllFiles() {
 }
 
 export function useFileById(fileId: string) {
-  return useQuery({
+  const queryClient = useQueryClient()
+  const query = useQuery({
     queryKey: ["file", fileId],
     queryFn: () => filesApi.getFileById(fileId),
     enabled: !!fileId,
   })
+
+  return {
+    ...query,
+    refetch: () => {
+      return queryClient.invalidateQueries({ queryKey: ["file", fileId] })
+    },
+  }
 }
 
 export function useFilesByTask(taskId: string) {
@@ -50,6 +58,7 @@ export function useGenerateXml() {
     mutationFn: (fileId: string) => filesApi.generateXml(fileId),
     onSuccess: (_, fileId) => {
       queryClient.invalidateQueries({ queryKey: ["file", fileId] })
+      queryClient.invalidateQueries({ queryKey: ["files"] })
     },
   })
 }

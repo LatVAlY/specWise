@@ -1,5 +1,8 @@
 .env
 docs
-__pycache__
 qdrant
 data-for-participants
+celerybeat-schedule
+
+# nested __pycache__
+__pycache__/**/*/

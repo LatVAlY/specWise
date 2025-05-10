@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Download, RefreshCw, FileText, CheckCircle } from "lucide-react"
+import { Download, RefreshCw, FileText, CheckCircle, Eye } from "lucide-react"
 import { useAllFiles } from "@/hooks/use-files"
 import { useGenerateXml } from "@/hooks/use-files"
 import { toast } from "@/components/ui/use-toast"
@@ -13,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import type { FileModel } from "@/types/api"
 
 export function FilesTable() {
+  const router = useRouter()
   const { data: filesData, refetch, isLoading: isLoadingFiles } = useAllFiles()
   const generateXmlMutation = useGenerateXml()
   const [isLoading, setIsLoading] = useState(true)
@@ -30,21 +32,13 @@ export function FilesTable() {
     })
   }
 
+  const handleViewFile = (fileId: string) => {
+    router.push(`/files/${fileId}`)
+  }
+
   const handleGenerateXml = async (fileId: string) => {
-    try {
-      await generateXmlMutation.mutateAsync(fileId)
-      toast({
-        title: "XML Generated",
-        description: "XML has been generated successfully.",
-      })
-      refetch()
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to generate XML. Please try again.",
-        variant: "destructive",
-      })
-    }
+    // Instead of generating XML directly, navigate to the file details page
+    router.push(`/files/${fileId}`)
   }
 
   const handleDownloadXml = (file: FileModel) => {
@@ -68,8 +62,8 @@ export function FilesTable() {
     URL.revokeObjectURL(url)
   }
 
-  const files: any[] = filesData?.files || []
-  console.log("Files data:", files)
+  const files = filesData?.files || []
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -121,7 +115,7 @@ export function FilesTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              files.map((file: any) => (
+              files.map((file) => (
                 <TableRow key={file.id}>
                   <TableCell>
                     <div className="flex items-center space-x-2">
@@ -144,13 +138,13 @@ export function FilesTable() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end space-x-2">
+                      <Button variant="outline" size="sm" onClick={() => handleViewFile(file.id)}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        View
+                      </Button>
+
                       {!file.is_xml_generated ? (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleGenerateXml(file.id)}
-                          disabled={generateXmlMutation.isPending}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => handleGenerateXml(file.id)}>
                           Generate XML
                         </Button>
                       ) : (
@@ -159,6 +153,7 @@ export function FilesTable() {
                           Download XML
                         </Button>
                       )}
+
                       {file.is_xml_generated && (
                         <Badge variant="outline" className="bg-green-50 ml-2 flex items-center">
                           <CheckCircle className="h-3 w-3 mr-1 text-green-500" />

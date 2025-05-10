@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
 from pydantic import BaseModel
 
 from app.services.mongo_db import MongoDBService
-from app.models.models import ClassificationItem, FileModel
+from app.models.models import FileModel
 
 
 logger = logging.getLogger(__name__)
@@ -126,44 +126,6 @@ async def get_files_by_customer(
             detail=f"Error retrieving files: {str(e)}",
         )
 
-
-@fileRouter.put("/{file_id}/items/{ref_no}/classification", response_model=FileResponse)
-async def update_item_classification(
-    file_id: UUID = Path(..., description="UUID of the file"),
-    ref_no: str = Path(..., description="Reference number of the item"),
-    classification_update: ClassificationUpdateRequest = None,
-    db: MongoDBService = Depends(get_db_service),
-):
-    """
-    Update the classification for a specific item within a file
-    """
-    try:
-        # Create ClassificationItem from request
-        classification_item = ClassificationItem(
-            classification=classification_update.classification,
-            confidence=classification_update.confidence,
-            match=classification_update.match,
-            relevant=classification_update.relevant,
-        )
-
-        # Update the classification
-        updated_file = db.update_classification_for_item(
-            file_id=file_id, ref_no=ref_no, classification_item=classification_item
-        )
-
-        return FileResponse(
-            file=updated_file, message=f"Classification updated for item {ref_no}"
-        )
-    except Exception as e:
-        logger.error(
-            f"Error updating classification for item {ref_no} in file {file_id}: {str(e)}"
-        )
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Error updating classification: {str(e)}",
-        )
-
-
 @fileRouter.put("/{file_id}/xml", response_model=FileResponse)
 async def generate_xml(
     file_id: UUID = Path(..., description="UUID of the file to generate XML for"),
@@ -180,16 +142,16 @@ async def generate_xml(
         xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n<catalog>\n'
 
         for item in file.items:
-            if item.classification_item:
-                xml_content += f'  <item id="{item.ref_no}">\n'
-                xml_content += f"    <description>{item.description}</description>\n"
-                xml_content += f"    <classification>{item.classification_item.classification}</classification>\n"
-                xml_content += f"    <confidence>{item.classification_item.confidence}</confidence>\n"
-                xml_content += f"    <match>{str(item.classification_item.match).lower()}</match>\n"
-                xml_content += f"    <relevant>{str(item.classification_item.relevant).lower()}</relevant>\n"
-                xml_content += f"    <quantity>{item.quantity}</quantity>\n"
-                xml_content += f"    <unit>{item.unit}</unit>\n"
-                xml_content += "  </item>\n"
+            xml_content += "  <item>\n"
+            xml_content += f"    <sku>{item.sku}</sku>\n"
+            xml_content += f"    <name>{item.name}</name>\n"
+            xml_content += f"    <text>{item.text}</text>\n"
+            xml_content += f"    <quantity>{item.quantity}</quantity>\n"
+            xml_content += f"    <quantityUnit>{item.quantityunit}</quantityUnit>\n"
+            xml_content += f"    <price>{item.price}</price>\n"
+            xml_content += f"    <priceUnit>{item.priceunit}</priceUnit>\n"
+            xml_content += f"    <commission>{item.commission}</commission>\n"
+            xml_content += "  </item>\n"
 
         xml_content += "</catalog>"
 

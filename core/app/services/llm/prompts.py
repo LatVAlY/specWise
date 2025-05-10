@@ -23,8 +23,8 @@ Service offer list with sku number:
 - Sonstige Arbeiten (z.B. Baustelleneinrichtung, Aufmaß, Mustertürblatt, etc.): DL5019990
 
 If you found a match between the service offer list and the description, we want to categorize the item into the following categories:
-Do not explain your reasoning, just give us the short answer in the XML (or XML-like format).
-
+Do not explain your reasoning, just give us the short answer in the Json (or Json-like format).
+you must return the following JSON format:
 {
   "item": [
     {
@@ -36,30 +36,13 @@ Do not explain your reasoning, just give us the short answer in the XML (or XML-
       "price": float
       "priceunit": "string"
       "commission": "string"
+      "confidence": float
     },
     ...
   ]
 }
 
-Here is an example of the expected format for the xml output:
 
-```
-<?xml version="1.0" encoding="UTF-8"?>
-   <items>
-      <item>
-         <sku>620001</sku>
-         <name>Bürotür mit Stahl-U-Zarge (0,76 x 2,135 m)</name>
-         <text>Hörmann Stahlfutterzarge VarioFix für Mauerwerk oder TRB<br/>- Drückerhöhe 1050 mm<br/>- Meterrissmarkierung<br/>- Maulweitenkante 15 mm<br/>- Stahlblech verzinkt, Materialstärke 1,5 mm<br/>- Hörmann BaseLine HPL Türblatt<br/>- Türgewicht ca. 18,1 kg/m²<br/>- Türstärke ca. 40,7 mm</text>
-         <quantity>1</quantity>
-         <quantityUnit>Stk</quantityUnit>
-         <price>695.00</price>
-         <priceUnit>€</priceUnit>
-         <commission>LV-POS. 1.1.10</commission>
-      </item>
-      ...hier werden so viele Positionen aufgeführt, wie im Leistungsverzeichnis enthalten sind.
-   </items>
-</order>
-```
 
 Here is the explanation for the different categories:
 - items: The items included in the offer, represented as an array. Each item is an object with the following properties:
@@ -71,6 +54,7 @@ Here is the explanation for the different categories:
   - price: The price of the item.
   - priceUnit: The unit of measurement for the price.
   - commission: The commission for the item.
+  - confidence: The confidence level of the categorization, represented as a float between 0 and 1.
 
 """
 

@@ -3,7 +3,7 @@ import { TasksTable } from "@/components/tasks-table";
 
 import { TasksInitializer } from "@/components/tasks-initializer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FilesTable } from "@/components/file_table";
+import { FilesTable } from "@/components/files_table";
 
 export default function Home() {
   return (

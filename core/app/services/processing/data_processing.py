@@ -1,5 +1,5 @@
 from typing import List
-from app.models.models import ItemDto
+from app.models.models import ItemDto, ItemChunkDto
 from app.services.llm.llm import OpenAILlmService
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextContainer
@@ -9,7 +9,7 @@ class DataProcessingService:
     def __init__(self):
         self.llm_service = OpenAILlmService()
 
-    def extract_pages_as_text(pdf_path):
+    def extract_pages_as_text(self, pdf_path: str):
         pages = []
         for page_layout in extract_pages(pdf_path):
             lines = []
@@ -32,11 +32,13 @@ class DataProcessingService:
             yield (i, chunk)
 
     def process_data(self, pages):
-        parsed_items: List[ItemDto] = []
+        parsed_items: List[ItemChunkDto] = []
         for i, page_window in self.get_page_windows(pages, window_size=2):
-            print(f"🧠 Parsing pages {i+1}-{i+2}")
+            print(f"🧠 Parsing pages {i+1}-{i+2} / {len(pages)}")
             try:
-                response: List[ItemDto] = self.llm_service.parse_page_with_llm(page_window)
+                response: List[ItemChunkDto] = self.llm_service.parse_page_with_llm(
+                    page_window
+                )
                 parsed_items.extend(response)
             except Exception as e:
                 print(f"❌ Failed at pages {i+1}-{i+2}: {e}")
@@ -57,30 +59,4 @@ class DataProcessingService:
                     merged = f"{existing_desc.strip()} {desc}".strip()
                     seen[ref].description = merged
 
-        expanded_items = self.expand_references(final_items)
-        return expanded_items
-
-
-    def expand_references(self, items: List[ItemDto]) -> List[ItemDto]:
-        """Expand references like 'wie Pos. 10' to full descriptions."""
-        expanded_items = []
-        for item in items:
-            if "wie Pos." in item.description:
-                ref_pos = (
-                    item.description.split("wie Pos.")[1].strip().split(",")[0].strip()
-                )
-
-                for ref_item in items:
-                    if ref_item.ref_no.endswith(ref_pos):
-                        new_item = item.copy()
-                        new_item.description = (
-                            ref_item.description + "\n" + item.description
-                        )
-                        expanded_items.append(new_item)
-                        break
-                else:
-                    expanded_items.append(item)
-            else:
-                expanded_items.append(item)
-
-        return expanded_items
+        return final_items

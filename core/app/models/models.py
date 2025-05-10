@@ -5,6 +5,7 @@ from uuid import UUID
 
 from openai import BaseModel
 
+
 class TaskStatus(str, Enum):
     pending = "PENDING"
     in_progress = "IN_PROGRESS"
@@ -12,6 +13,8 @@ class TaskStatus(str, Enum):
     failed = "FAILED"
     canceled = "CANCELED"
     updating = "UPDATING"
+
+
 class TaskDto(BaseModel):
     id: UUID
     collection_id: UUID
@@ -21,7 +24,6 @@ class TaskDto(BaseModel):
     created_at: Optional[int] = None
     updated_at: Optional[int] = None
 
-
     def to_dict(self):
         return {
             "id": self.id,
@@ -30,25 +32,16 @@ class TaskDto(BaseModel):
             "fileName": self.file_name,
             "status": self.status,
             "createdAt": self.created_at,
-            "updatedAt": self.updated_at
+            "updatedAt": self.updated_at,
         }
 
 
-class ClassificationItem(BaseModel):
-    """Model for items with classification results"""
-    classification: str
-    confidence: float
-    match: bool
-    relevant: bool
-
-class ItemDto(BaseModel):
+class ItemChunkDto(BaseModel):
     ref_no: str
     description: str
     quantity: float
     unit: str
-    classification_item: Optional[ClassificationItem] = None
 
-    @classmethod
     def from_dict(cls, data: dict):
         return cls(
             ref_no=data.get("ref_no"),
@@ -56,9 +49,37 @@ class ItemDto(BaseModel):
             quantity=data.get("quantity"),
             unit=data.get("unit"),
         )
-    
+
+
+class ItemDto(BaseModel):
+    sku: str
+    name: str
+    text: str
+    quantity: int
+    quantityunit: str
+    price: float
+    priceunit: str
+    commission: str
+    confidence: float
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            sku=data.get("sku"),
+            name=data.get("name"),
+            text=data.get("text"),
+            quantity=data.get("quantity"),
+            quantityunit=data.get("quantityunit"),
+            price=data.get("price"),
+            priceunit=data.get("priceunit"),
+            commission=data.get("commission"),
+            confidence=data.get("confidence"),
+        )
+
+
 class FileModel(BaseModel):
     """File metadata model for storage in MongoDB"""
+
     id: UUID
     filename: str
     filepath: str

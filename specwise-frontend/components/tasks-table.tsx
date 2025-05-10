@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { RefreshCw, FileText, CheckCircle, AlertCircle, Clock, X, Trash2 } from 'lucide-react'
+import { RefreshCw, FileText, CheckCircle, AlertCircle, Clock, X, Trash2 } from "lucide-react"
 import { useTasksStore } from "@/store/tasks-store"
 import { useDeleteTask } from "@/hooks/use-tasks"
 import { TaskStatus } from "@/types/api"
@@ -156,9 +156,7 @@ export function TasksTable() {
                       <FileText className="h-4 w-4 text-blue-500" />
                       <span className="font-medium">{task.file_name || task.description || "Unknown task"}</span>
                     </div>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      ID: {task.id.substring(0, 8)}...
-                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">ID: {task.id.substring(0, 8)}...</div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">

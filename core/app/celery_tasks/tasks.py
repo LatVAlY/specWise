@@ -1,3 +1,4 @@
+import logging
 from celery.exceptions import MaxRetriesExceededError
 import os
 import sys
@@ -10,9 +11,11 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'run_pipelines'))
 
 pipelines = Pipelines()
 
+logger = logging.getLogger(__name__)
+
 
 @app.task(bind=True)
-async def run_file_data_processing(self, user_id: str, collection_id: str, file_path: str, task_id: str):
+def run_file_data_processing(self, user_id: str, collection_id: str, filename: str, task_id: str):
     """
     Process data from an uploaded file asynchronously as a Celery task.
     
@@ -27,8 +30,8 @@ async def run_file_data_processing(self, user_id: str, collection_id: str, file_
     user_id : str
     collection_id : str
         The ID of the collection where processed data will be stored.
-    file_path : str
-        The path to the file that needs to be processed.
+    filename : str
+        The name of the file that needs to be processed.
     task_id : str
         A unique identifier for tracking this specific processing task.
         
@@ -44,11 +47,12 @@ async def run_file_data_processing(self, user_id: str, collection_id: str, file_
         The task state is updated to 'FAILURE' with error details.
     """
     try:
+        logger.info(f"Processing file: {filename} for user: {user_id} in collection: {collection_id}")
         # Call the pipeline's process_data_from_file method to handle the file processing
-        return await pipelines.process_data_from_file(
+        return pipelines.process_data_from_file(
             user_id=user_id,
             collection_id=collection_id,
-            file_path=file_path,
+            filename=filename,
             task_id=task_id,
         )
     except Exception as e:

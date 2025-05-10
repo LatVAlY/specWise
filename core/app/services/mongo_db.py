@@ -2,7 +2,7 @@ from typing import List, Dict, Any, Optional, Union
 from uuid import UUID
 from datetime import datetime
 from bson import ObjectId
-from app.models.models import ClassificationItem, FileModel, ItemDto, TaskDto, TaskStatus
+from app.models.models import FileModel, ItemDto, TaskDto, TaskStatus
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import DuplicateKeyError, PyMongoError
 from app.envirnoment import config
@@ -215,19 +215,16 @@ class MongoDBService:
                 items_dict = []
                 for item in file_dict["items"]:
                     item_dict = {
-                        "ref_no": item["ref_no"],
-                        "description": item["description"],
-                        "quantity": item["quantity"],
-                        "unit": item["unit"],
+                        "sku": item.sku,
+                        "name": item.name,
+                        "text": item.text,
+                        "quantity": item.quantity,
+                        "quantityunit": item.quantityunit,
+                        "price": item.price,
+                        "priceunit": item.priceunit,
+                        "commission": item.commission,
+                        "confidence": item.confidence
                     }
-                    
-                    if item.get("classification_item"):
-                        item_dict["classification_item"] = {
-                            "classification": item["classification_item"]["classification"],
-                            "confidence": item["classification_item"]["confidence"],
-                            "match": item["classification_item"]["match"],
-                            "relevant": item["classification_item"]["relevant"]
-                        }
                     
                     items_dict.append(item_dict)
                 
@@ -295,58 +292,6 @@ class MongoDBService:
             return self._document_to_file_model(result)
         except Exception as e:
             raise Exception(f"Failed to update file items: {str(e)}")
-    
-    def update_classification_for_item(self, file_id: UUID, ref_no: str, classification_item: ClassificationItem) -> FileModel:
-        """
-        Update the classification for a specific item within a file
-        
-        Args:
-            file_id: UUID of the file containing the item
-            ref_no: Reference number of the item to update
-            classification_item: ClassificationItem data to set
-            
-        Returns:
-            Updated FileModel
-            
-        Raises:
-            Exception: If file not found, item not found, or update fails
-        """
-        try:
-            # Get the current file document
-            file_doc = self.files_collection.find_one({"id": str(file_id)})
-            if not file_doc:
-                raise Exception(f"File with ID {file_id} not found")
-            
-            # Find the item index in the items array
-            found = False
-            items = file_doc.get("items", [])
-            for i, item in enumerate(items):
-                if item.get("ref_no") == ref_no:
-                    classification_dict = {
-                        "match": classification_item.match,
-                        "relevant": classification_item.relevant
-                    }
-                    
-                    # Use positional operator $ to update the specific item in the array
-                    result = self.files_collection.find_one_and_update(
-                        {"id": str(file_id), "items.ref_no": ref_no},
-                        {"$set": {
-                            "items.$.classification_item": classification_dict,
-                            "updated_at": int(datetime.now().timestamp() * 1000)
-                        }},
-                        return_document=ReturnDocument.AFTER
-                    )
-                    
-                    found = True
-                    break
-            
-            if not found:
-                raise Exception(f"Item with ref_no {ref_no} not found in file {file_id}")
-            
-            # Convert the MongoDB document back to FileModel
-            return self._document_to_file_model(result)
-        except Exception as e:
-            raise Exception(f"Failed to update classification for item: {str(e)}")
     
     def update_xml_content(self, file_id: UUID, xml_content: str) -> FileModel:
         """
@@ -491,23 +436,17 @@ class MongoDBService:
         if "items" in doc and doc["items"]:
             items = []
             for item_dict in doc["items"]:
-                # Create ItemDto with nested ClassificationItem if available
                 item = {
-                    "ref_no": item_dict["ref_no"],
-                    "description": item_dict["description"],
+                    "sku": item_dict["sku"],
+                    "name": item_dict["name"],
+                    "text": item_dict["text"],
                     "quantity": item_dict["quantity"],
-                    "unit": item_dict["unit"],
+                    "quantityunit": item_dict["quantityunit"],
+                    "price": item_dict["price"],
+                    "priceunit": item_dict["priceunit"],
+                    "commission": item_dict["commission"],
+                    "confidence": item_dict["confidence"]
                 }
-                
-                if item_dict.get("classification_item"):
-                    classification = item_dict["classification_item"]
-                    item["classification_item"] = ClassificationItem(
-                        classification=classification["classification"],
-                        confidence=classification["confidence"],
-                        match=classification["match"],
-                        relevant=classification["relevant"]
-                    )
-                
                 items.append(ItemDto(**item))
             
             doc["items"] = items

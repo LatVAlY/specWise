@@ -1,16 +1,14 @@
-import datetime
 import uuid
 from pathlib import Path
 from typing import List
 import logging
 
-from app.models.base_dto import ErrorBaseResponse, FileAlreadyExists
+from app.models.base_dto import FileAlreadyExists
 from app.models.models import TaskDto, TaskStatus
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import pika
-from celery.result import AsyncResult
-from fastapi import APIRouter, Depends, UploadFile, File, Query
+from fastapi import APIRouter, UploadFile, File, Query
 from app.celery_tasks.tasks import (
     run_file_data_processing,
 )
@@ -80,13 +78,15 @@ async def load_data(
             )
             logger.info(f"Saving file {file.filename} to {file_path}")
             db.insert_task(task=task_dto)
+            logger.info(f"in collection: {collection_id}")
             run_file_data_processing.apply_async(
                 args=[
+                    "test",
+                    collection_id,
+                    file.filename,
                     task_id,
-                    str(collection_id),
-                    str(file_path),
-                    str(file.filename),
-                ]
+                ],
+                task_id=task_id,
             )
             tasks.append(task_dto)
         return tasks
