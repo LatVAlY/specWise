@@ -3,19 +3,21 @@ from pathlib import Path
 from typing import List
 import logging
 
-from core.app.models.base_dto import ErrorBaseResponse, FileAlreadyExists
-from core.app.models.models import TaskDto
+from app.models.base_dto import ErrorBaseResponse, FileAlreadyExists
+from app.models.models import TaskDto, TaskStatus
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import pika
 from celery.result import AsyncResult
-from fastapi import APIRouter, UploadFile, File, Query
+from fastapi import APIRouter, Depends, UploadFile, File, Query
 from app.celery_tasks.tasks import (
     run_file_data_processing,
 )
 from app.constants import ALLOWED_EXTENSIONS
 from app.envirnoment import config
-from core.app.models.validator import return_generic_http_error, return_http_error
+from app.models.validator import return_generic_http_error, return_http_error
+from app.services.mongo_db import MongoDBService
+from app.utils.file_utils import save_file
 
 logger = logging.getLogger(__name__)
 
@@ -28,11 +30,21 @@ dataRouter = APIRouter(
 
 
 @dataRouter.post(
-    "/", name="Upload Data", response_model=List[TaskDto], operation_id="upload_data"
+    "/",
+    name="Upload Data",
+    response_model=List[TaskDto],
+    operation_id="upload_data",
 )
+def generate_collection_id():
+    """
+    Generate a unique collection ID.
+    """
+    return str(uuid.uuid4())
+
+
 async def load_data(
-    collection_id: uuid.UUID,
     files: List[UploadFile] = File(...),
+    db: MongoDBService = Depends(MongoDBService()),
 ):
     for f in files:
         logger.info(f"received {f.filename} ")
@@ -48,6 +60,7 @@ async def load_data(
             return return_http_error(
                 code="R0010", message="Unable to establish RabbitMQ connection."
             )
+        collection_id = generate_collection_id()
 
         tasks = []
         for file in files:
@@ -55,20 +68,25 @@ async def load_data(
                 return return_http_error(
                     code="B0015", message="File format not supported"
                 )
-            task_id = run_file_data_processing.apply_async(
+            file_path = save_file(file)
+            task_id = str(uuid.uuid4())
+            task_dto = TaskDto(
+                id=task_id,
+                collection_id=collection_id,
+                file_path=str(file_path),
+                filename=file.filename,
+                status=TaskStatus.PENDING,
+            )
+            db.insert_task(task=task_dto)
+            run_file_data_processing.apply_async(
                 args=[
-                    str(uuid.uuid4()),
+                    task_id,
                     str(collection_id),
-                    file.file,
+                    file_path,
                     str(file.filename),
                 ]
             )
-            task = TaskDto(
-                task_id=task_id.id,
-                collection_id=str(collection_id),
-                filename=file.filename,
-            )
-            tasks.append(task)
+            tasks.append(task_dto)
         return tasks
     except FileAlreadyExists as e:
         logger.error(f"Tried Uploading File that already exists")

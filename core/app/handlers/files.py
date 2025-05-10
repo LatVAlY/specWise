@@ -4,8 +4,9 @@ from uuid import UUID
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
 from pydantic import BaseModel
 
-from core.app.services.mongo_db import MongoDBService
-from models import FileModel, TaskDto, TaskStatus, ClassificationItem
+from app.services.mongo_db import MongoDBService
+from app.models.models import ClassificationItem, FileModel, TaskDto, TaskStatus
+
 
 logger = logging.getLogger(__name__)
 

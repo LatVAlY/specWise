@@ -3,8 +3,8 @@ import os
 import sys
 
 from app.envirnoment import config
-from core.app.services.processing.pipeline import Pipelines
-from worker import app
+from app.services.processing.pipeline import Pipelines
+from app.worker import app
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'run_pipelines'))
 

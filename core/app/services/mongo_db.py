@@ -2,10 +2,10 @@ from typing import List, Dict, Any, Optional, Union
 from uuid import UUID
 from datetime import datetime
 from bson import ObjectId
-from core.app.models.models import ClassificationItem, FileModel, ItemDto, TaskDto, TaskStatus
+from app.models.models import ClassificationItem, FileModel, ItemDto, TaskDto, TaskStatus
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import DuplicateKeyError, PyMongoError
-from core.app.envirnoment import config
+from app.envirnoment import config
 
 class PyObjectId(ObjectId):
     """Custom type for handling MongoDB's ObjectId"""
@@ -31,7 +31,7 @@ class MongoDBService:
             connection_string: MongoDB connection string
             db_name: Database name to use
         """
-        mongodb_connection_string =config.get("MONGODB_CONNECTION_STRING", "mongodb://localhost:27017")
+        mongodb_connection_string =config.get("MONGO_DB_CONNECTION", "mongodb://localhost:27018")
         mongodb_database_name =config.get("MONGODB_DATABASE", "specwise")
     
         self.client = MongoClient(mongodb_connection_string)

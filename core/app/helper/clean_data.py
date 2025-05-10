@@ -1,6 +1,6 @@
 from typing import Any, Dict, List
 
-from core.app.models.models import ItemDto
+from app.models.models import ItemDto
 
 
 def expand_references(self, items: List[ItemDto]) -> List[Dict[str, Any]]:

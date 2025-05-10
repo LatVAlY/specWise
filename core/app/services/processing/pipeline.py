@@ -1,5 +1,5 @@
 
-from core.app.services.processing.data_processing import DataProcessingService
+from app.services.processing.data_processing import DataProcessingService
 
 
 class Pipelines:
@@ -58,7 +58,7 @@ class Pipelines:
             # self.vector_db_repo.store_data(user_id, collection_id, parsed_items)
             # self.llm_service.categorize()
 
-            
+
 
             return {
                 "status": "success",
