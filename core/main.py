@@ -2,10 +2,11 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.concurrency import asynccontextmanager
-from core.app.handlers.files import fileRouter
-from core.app.handlers.data import dataRouter
-from core.app.services.mongo_db import MongoDBService
-from core.app.envirnoment import config
+from app.handlers.files import fileRouter
+from app.handlers.data import dataRouter
+from app.handlers.task import taskRouter
+from app.services.mongo_db import MongoDBService
+from app.envirnoment import config
 
 
 # Configure logging
@@ -67,6 +68,7 @@ def create_app() -> FastAPI:
 
     app.include_router(fileRouter)
     app.include_router(dataRouter)
+    app.include_router(taskRouter)
 
     return app
 

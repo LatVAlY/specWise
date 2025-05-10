@@ -1,11 +1,13 @@
 import logging
+from multiprocessing.pool import AsyncResult
 from typing import List, Optional
 from uuid import UUID
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
 from pydantic import BaseModel
 
-from core.app.services.mongo_db import MongoDBService
-from models import FileModel, TaskDto, TaskStatus, ClassificationItem
+from app.services.mongo_db import MongoDBService
+from app.models.models import ClassificationItem, FileModel
+
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +28,6 @@ class FileResponse(BaseModel):
 class FilesListResponse(BaseModel):
     files: List[FileModel]
     count: int
-    message: str
-
-
-class TaskResponse(BaseModel):
-    task: TaskDto
     message: str
 
 
@@ -58,6 +55,32 @@ async def get_all_files(db: MongoDBService = Depends(get_db_service)):
         logger.error(f"Error retrieving files: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving files: {str(e)}",
+        )
+
+
+@fileRouter.get("/task/{task_id}", response_model=FilesListResponse)
+async def get_files_by_task(
+    task_id: UUID = Path(..., description="UUID of the task to filter files by"),
+    db: MongoDBService = Depends(get_db_service),
+):
+    """
+    Get all files associated with a specific task
+    """
+    try:
+        # First check if the task exists
+        task = db.get_task_by_id(task_id)
+        files = db.get_files_by_task(task_id)
+
+        return FilesListResponse(
+            files=files,
+            count=len(files),
+            message=f"Found {len(files)} files for task {task_id}",
+        )
+    except Exception as e:
+        logger.error(f"Error retrieving files for task {task_id}: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Error retrieving files: {str(e)}",
         )
 
@@ -104,50 +127,6 @@ async def get_files_by_customer(
         )
 
 
-@fileRouter.get("/task/{task_id}", response_model=FilesListResponse)
-async def get_files_by_task(
-    task_id: UUID = Path(..., description="UUID of the task to filter files by"),
-    db: MongoDBService = Depends(get_db_service),
-):
-    """
-    Get all files associated with a specific task
-    """
-    try:
-        # First check if the task exists
-        task = db.get_task_by_id(task_id)
-        files = db.get_files_by_task(task_id)
-
-        return FilesListResponse(
-            files=files,
-            count=len(files),
-            message=f"Found {len(files)} files for task {task_id}",
-        )
-    except Exception as e:
-        logger.error(f"Error retrieving files for task {task_id}: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Error retrieving files: {str(e)}",
-        )
-
-
-@fileRouter.get("/task/{task_id}/status", response_model=TaskResponse)
-async def get_task_status(
-    task_id: UUID = Path(..., description="UUID of the task to check status"),
-    db: MongoDBService = Depends(get_db_service),
-):
-    """
-    Get the status of a specific task
-    """
-    try:
-        task = db.get_task_by_id(task_id)
-        return TaskResponse(task=task, message=f"Task status: {task.status}")
-    except Exception as e:
-        logger.error(f"Error retrieving task {task_id}: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Task not found: {str(e)}"
-        )
-
-
 @fileRouter.put("/{file_id}/items/{ref_no}/classification", response_model=FileResponse)
 async def update_item_classification(
     file_id: UUID = Path(..., description="UUID of the file"),
@@ -182,34 +161,6 @@ async def update_item_classification(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Error updating classification: {str(e)}",
-        )
-
-
-@fileRouter.put("/task/{task_id}/status", response_model=TaskResponse)
-async def update_task_status(
-    task_id: UUID = Path(..., description="UUID of the task to update"),
-    status: TaskStatus = Query(..., description="New status for the task"),
-    additional_info: Optional[str] = Query(
-        None, description="Optional additional information"
-    ),
-    db: MongoDBService = Depends(get_db_service),
-):
-    """
-    Update the status of a task
-    """
-    try:
-        updated_task = db.update_task_status(
-            task_id=task_id, status=status, additional_info=additional_info
-        )
-
-        return TaskResponse(
-            task=updated_task, message=f"Task status updated to {status}"
-        )
-    except Exception as e:
-        logger.error(f"Error updating task {task_id} status: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Error updating task status: {str(e)}",
         )
 
 

@@ -331,4 +331,3 @@ if __name__ == "__main__":
         f"parsed_items_example_{example_num}_expanded.json", "w", encoding="utf-8"
     ) as f:
         json.dump(data_expanded, f, ensure_ascii=False, indent=2)
-

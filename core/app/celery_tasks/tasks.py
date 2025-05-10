@@ -3,8 +3,8 @@ import os
 import sys
 
 from app.envirnoment import config
-from core.app.services.processing.pipeline import Pipelines
-from worker import app
+from app.services.processing.pipeline import Pipelines
+from app.worker import app
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'run_pipelines'))
 
@@ -61,72 +61,3 @@ async def run_file_data_processing(self, user_id: str, collection_id: str, file_
         })
         
         raise e
-
-    """
-    Send an email based on a specified template as a Celery task.
-    
-    This task handles email sending with automatic retry logic for specific
-    error codes. It uses templates defined in the EmailTemplateType enum
-    to format and send emails.
-    
-    Parameters:
-    -----------
-    self : Task
-        The Celery task instance (automatically passed when bind=True).
-    email_template : str
-        The name of the email template to use (must match a value in EmailTemplateType enum).
-    retry_error_codes : list[str], optional
-        HTTP error codes that should trigger a retry (default: [401, 500, 400]).
-    **kwargs : dict
-        Additional parameters to pass to the email template, such as:
-        - recipient_email: Email address of the recipient
-        - subject_params: Parameters for the email subject
-        - body_params: Parameters for the email body
-        
-    Returns:
-    --------
-    dict
-        Results of the email sending operation with metadata.
-        
-    Raises:
-    -------
-    MaxRetriesExceededError
-        If the maximum number of retries is exceeded.
-    Exception
-        Any other exception that occurs during email sending.
-    """
-    try:
-        # Convert the template string to the corresponding enum value and send the email
-        result = pipelines.send_email(EmailTemplateType[email_template], **kwargs)
-        
-    except Exception as e:
-        # Check if the exception has an error code that should trigger a retry
-        if hasattr(e, 'code') and e.code in retry_error_codes:
-            loguru.logger.error(f"Retrying email task due to error code {e.code}: {e}")
-            
-            try:
-                self.retry(default_retry_delay=60, max_retries=3, retry_backoff=True)
-                
-            except MaxRetriesExceededError as retry_error:
-                loguru.logger.error("Max retries exceeded for email sending task")
-                
-                self.update_state(state='FAILURE', meta={
-                    'exc_type': type(retry_error).__name__, 
-                    'exc_message': str(retry_error)
-                })
-                
-                raise retry_error
-        else:
-            # For non-retriable errors, log and update task state
-            loguru.logger.error(f"Email sending failed with error: {e}")
-            
-            self.update_state(state='FAILURE', meta={
-                'exc_type': type(e).__name__, 
-                'exc_message': str(e)
-            })
-            
-            # Re-raise the exception to be handled by Celery's error handling
-            raise e
-
-    # Return the result if email sending was successful
-    return result

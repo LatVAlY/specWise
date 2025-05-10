@@ -1,6 +1,6 @@
 from typing import List
-from core.app.models.models import ItemDto
-from core.app.services.llm.llm import OpenAILlmService
+from app.models.models import ItemDto
+from app.services.llm.llm import OpenAILlmService
 from pdfminer.high_level import extract_pages
 from pdfminer.layout import LTTextContainer
 
@@ -18,7 +18,7 @@ class DataProcessingService:
                     lines.append(element.get_text())
             pages.append("\n".join(lines))
         return pages
-    
+
     def get_page_windows(self, pages, window_size=2):
         """
         Yields joined page text in overlapping windows, with page headers.

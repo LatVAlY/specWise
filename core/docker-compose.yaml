@@ -7,7 +7,7 @@ services:
     ports:
       - "6381:6379"
     command: redis-server --appendonly yes
-    
+
   qdrant:
     image: qdrant/qdrant:latest
     restart: always
@@ -37,22 +37,3 @@ services:
       - .env
     ports:
       - "27018:27017"
-
-    image: langfuse/langfuse:2
-    container_name: langfuse
-    environment:
-      - DATABASE_URL=postgresql://specWise:Welcome123@postgres:5432/specWise?schema=langfuse
-      - NEXTAUTH_URL=http://localhost:3000
-      - NEXTAUTH_SECRET=secret
-      - SALT=SALT
-      - ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000
-      - LANGFUSE_INIT_USER_EMAIL=admin@specWise.de
-      - LANGFUSE_INIT_USER_PASSWORD=admin123
-      - LANGFUSE_INIT_ORG_ID=specWise-org-id
-      - LANGFUSE_INIT_PROJECT_ID=specWise-project-id
-      - LANGFUSE_INIT_PROJECT_NAME=specWise
-      - LANGFUSE_INIT_PROJECT_PUBLIC_KEY=specWise
-      - LANGFUSE_INIT_PROJECT_SECRET_KEY=7ba6fe37-9054-4c46-9fe8-1964a2db611e
-    ports:
-      - "3002:3000"
-

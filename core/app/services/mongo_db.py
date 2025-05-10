@@ -2,10 +2,10 @@ from typing import List, Dict, Any, Optional, Union
 from uuid import UUID
 from datetime import datetime
 from bson import ObjectId
-from core.app.models.models import ClassificationItem, FileModel, ItemDto, TaskDto, TaskStatus
+from app.models.models import ClassificationItem, FileModel, ItemDto, TaskDto, TaskStatus
 from pymongo import MongoClient, ReturnDocument
 from pymongo.errors import DuplicateKeyError, PyMongoError
-from core.app.envirnoment import config
+from app.envirnoment import config
 
 class PyObjectId(ObjectId):
     """Custom type for handling MongoDB's ObjectId"""
@@ -31,16 +31,13 @@ class MongoDBService:
             connection_string: MongoDB connection string
             db_name: Database name to use
         """
-        mongodb_connection_string =config.get("MONGODB_CONNECTION_STRING", "mongodb://localhost:27017")
+        mongodb_connection_string =config.get("MONGO_DB_CONNECTION", "mongodb://localhost:27018")
         mongodb_database_name =config.get("MONGODB_DATABASE", "specwise")
     
         self.client = MongoClient(mongodb_connection_string)
         self.db = self.client[mongodb_database_name]
         self.tasks_collection = self.db["tasks"]
         self.files_collection = self.db["files"]
-        
-        # Create indexes
-        self._setup_indexes()
     
     def _setup_indexes(self):
         """Set up required indexes for collections"""
@@ -120,6 +117,15 @@ class MongoDBService:
         except Exception as e:
             raise Exception(f"Failed to update task status: {str(e)}")
     
+    def get_all_tasks(self) -> List[TaskDto]:
+        """
+        Get all tasks in the database
+        Returns:
+            List of TaskDto objects
+        """
+        cursor = self.tasks_collection.find()
+        return [self._document_to_task_dto(doc) for doc in cursor]
+
     def get_task_by_id(self, task_id: UUID) -> TaskDto:
         """
         Get a task by its ID
@@ -460,10 +466,8 @@ class MongoDBService:
         # Handle specific field mappings between MongoDB and TaskDto
         task_dict = {
             "id": UUID(doc["id"]),
-            "type": doc["type"],
             "collection_id": UUID(doc["collectionId"]),
             "description": doc["description"],
-            "additional_info": doc.get("additionalInfo"),
             "file_name": doc.get("fileName"),
             "status": TaskStatus(doc["status"]),
             "created_at": doc["createdAt"],

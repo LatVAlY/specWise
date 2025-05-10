@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 
 from starlette.responses import JSONResponse
 
-from core.app.models.base_dto import BaseError, ErrorBaseResponse
+from app.models.base_dto import BaseError, ErrorBaseResponse
 
 
 def validate_uuid(uuid_string: str) -> uuid.UUID:

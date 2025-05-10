@@ -5,7 +5,7 @@ description = ""
 authors = [
     { name = "Specwise" },]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<4"
 dependencies = [
     "openai (>=1.78.0,<2.0.0)",
     "celery (>=5.5.2,<6.0.0)",
@@ -14,10 +14,16 @@ dependencies = [
     "pdfminer (>=20191125,<20191126)",
     "pdfminer-six (>=20250506,<20250507)",
     "pymongo (>=4.12.1,<5.0.0)",
-    "uvicorn (>=0.34.2,<0.35.0)"
+    "uvicorn (>=0.34.2,<0.35.0)",
+    "gunicorn (>=23.0.0,<24.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "redis (>=6.0.0,<7.0.0)",
+    "langchain-qdrant (>=0.2.0,<0.3.0)",
+    "langchain-core (>=0.3.59,<0.4.0)",
+    "langchain-openai (>=0.3.16,<0.4.0)"
 ]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+build-backend = "poetry.masonry.api"

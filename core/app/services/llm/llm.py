@@ -1,15 +1,14 @@
 
 import json
 from typing import List
-from core.app.models.models import ItemDto
-from core.app.services.llm.prompts import CATEGORIZATION_PROMPT, SYSTEM_PROMPT_LLM_CHUNKING
-from envirnoment import config
+from app.models.models import ItemDto
+from app.services.llm.prompts import CATEGORIZATION_PROMPT, SYSTEM_PROMPT_LLM_CHUNKING
 from openai import OpenAI
+from app.envirnoment import config
 
 
 class OpenAILlmService:
-    def __init__(self, api_key: str):
-        self.api_key = api_key
+    def __init__(self):
         self.openaiClient = OpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=config["OPENROUTE_API_KEY"],

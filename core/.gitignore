@@ -1,2 +1,5 @@
 .env
 docs
+__pycache__
+qdrant
+data-for-participants
