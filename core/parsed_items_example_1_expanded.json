@@ -52,7 +52,7 @@
     "description": "Bürotür mit Stahl-U-Zarge, RBLM b/h = 1,01 x 2,65 m, mit Oberlicht, Wanddicke: 12,5\ncm (GK),\nHörmann Stahlfutterzarge VarioFix für Mauerwerk oder TRB \n(für gefälzte Türblätter)  \n2-schalig mit MW-Verstellung im Zierfalz, \nVerstellbereich +15/ -5 mm \neinbaufertige, rechts / links verwendbare Stahlzarge \nmit Umweltproduktdeklaration (EPD) nach ISO14025 und \nprEN15804 ift Rosenheim EPD-SEZ-0.12\nStahlblech verzinkt, Materialstärke der Falzschale 1,5 mm \nGrundierung Lichtgrau, RAL 7035\n\nAusstattung serienmäßig: \n• Drückerhöhe 1050 mm",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.1.80"
+    "references_id": "1.1.60"
   },
   {
     "ref_no": "1.1.80",
@@ -65,15 +65,13 @@
     "ref_no": "1.1.90",
     "description": "*** Bedarfsposition ohne GB\nZulage Pos. 70 + 80: Glasausschnitt 1/3, Klarglas, VSG, liefern u. inkl. aller \nNebenarbeiten montieren *** Bedarfsposition ohne GB\nZulage Pos. 70 + 80: Glasausschnitt 1/3, Klarglas, VSG, liefern u. inkl. aller Nebenarbeiten montieren",
     "quantity": 1.0,
-    "unit": "Stk",
-    "references_id": "1.1.70"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.1.100",
     "description": "*** Bedarfsposition ohne GB\nZulage Pos. 70 + 80: Glasausschnitt 1/2, Klarglas, VSG, liefern u. inkl. aller \nNebenarbeiten montieren *** Bedarfsposition ohne GB\nZulage Pos. 70 + 80: Glasausschnitt 1/2, Klarglas, VSG, liefern u. inkl. aller Nebenarbeiten montieren",
     "quantity": 1.0,
-    "unit": "Stk",
-    "references_id": "1.1.70"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.1.110",
@@ -92,8 +90,7 @@
     "ref_no": "1.1.130",
     "description": "Zulage für WC-Beschlag,\nMetall-Einsteckschloss mit WC-Verriegelung, Bad-\nRosettengarnitur mit Rot/Weiß-Fenster,\nFabrikat: Serie wie Innentüren,\nliefern u. einbauen",
     "quantity": 2.0,
-    "unit": "Stk",
-    "references_id": "1.1.10"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.1.140",
@@ -106,7 +103,7 @@
     "description": "*** Bedarfsposition ohne GB\nwie Vorposition, jedoch in Aluminium",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.1.150"
+    "references_id": "1.1.140"
   },
   {
     "ref_no": "1.1.160",
@@ -124,15 +121,13 @@
     "ref_no": "1.1.180",
     "description": "Zulage für OTS für barrierefreien Durchgang,\nliefern und montieren,\nDormakaba TS 98 XEA oder GEZE TS 5000 ECline\nangebot. Fabrikat:  '....................................................'",
     "quantity": 1.0,
-    "unit": "Stk",
-    "references_id": "1.1.10"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.1.190",
     "description": "*** Bedarfsposition ohne GB\nZulage verschraubte Türpuffer, liefern u. montieren,\nangebot. Fabrikat: '....................................................'",
     "quantity": 1.0,
-    "unit": "Stk",
-    "references_id": "1.1.60"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.1.200",
@@ -152,7 +147,7 @@
     "description": "einteiliges Fenster Innenraum, 1 x Schiebe-Flügel, auf der Wand montiert/laufend,\nRBLM b/h = 1,01  x 1,22 m,\nsiehe beigefügten Grundriß EG sowie Detailplan WP-D_012 einteiliges Fenster Innenraum, 1 x Schiebe-Flügel, auf der Wand montiert/laufend, \nRBLM b/h = 1,01  x 1,22 m,\nsiehe beigefügten Grundriß EG sowie Detailplan WP-D_012\n\nangebot. Fabrikat: '.................................................'\n\nEinbauort: TrH/Anmeldung EG",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.1.240"
+    "references_id": "1.1.200"
   },
   {
     "ref_no": "1.1.240",
@@ -165,50 +160,49 @@
     "ref_no": "1.2.10",
     "description": "1-flgl. Stahltür, T30 RS, RBLM b/h = 0,76 x 2,135 m, liefern u. montieren, Einbauort: Putzraum EG, Hörmann Stahl-Feuerschutztür H3 OD, 30-1 FSA od. glw. 1-flügliges, feuerhemmendes, einbaufertiges Element, geprüft und bauaufsichtlich zugelassen, mit Umweltproduktdeklaration (EPD) nach ISO14025 und prEN15804 ift Rosenheim EPD-MT-0.1.1 Zulassungs-Nr. DIBT: Z-6.20-2203 Einbruchschutz: RC2, 65 mm dicke, doppelwandige, vollflächig verklebte Verbundkonstruktion aus verzinktem Material mit planebener Oberfläche, Stahlsicherungsbolzen im Falzbereich gemäß zulassungs-technischer Anforderung, Oberfläche: grundiert (umweltfreundlich pulverbeschichtet) in Anlehnung an RAL 9002, Grauweiß Bänder: dreiteilig, 1 Federband mit Kugellager, 1 Konstruktionsband mit Kugellager, Drückergarnitur: Edelstahl, Baukörper-Anschlüsse: Trockenbauwand inkl. Obertürschließer mit Gleitschiene, nach DIN EN 1154 angebot. Fabrikat: '..................................................' Stahltüren\n1-flgl. Stahltür, T30 RS, RBLM b/h = 0,76 x 2,135 m, liefern u. montieren, Einbauort: \nPutzraum EG,\nHörmann Stahl-Feuerschutztür H3 OD, 30-1 FSA  od. glw.\n1-flügliges, feuerhemmendes, einbaufertiges Element,\ngeprüft und bauaufsichtlich zugelassen,\nmit Umweltproduktdeklaration (EPD) nach ISO14025 und \nprEN15804 ift Rosenheim EPD-MT-0.1.1\nZulassungs-Nr. DIBT: Z-6.20-2203\nEinbruchschutz: RC2,\n65 mm dicke, doppelwandige, vollflächig verklebte Verbund-\nkonstruktion aus verzinktem Material mit planebener Ober-\nfläche,\nStahlsicherungsbolzen im Falzbereich gemäß zulassungs-\ntechnischer Anforderung,\nOberfläche: grundiert (umweltfreundlich pulverbeschichtet) in \nAnlehnung an RAL 9002, Grauweiß \nBänder: dreiteilig, 1 Federband mit Kugellager, 1 Konstruktions-\nband mit Kugellager,\nDrückergarnitur: Edelstahl,\nBaukörper-Anschlüsse: Trockenbauwand\ninkl. Obertürschließer mit Gleitschiene, nach DIN EN 1154\nangebot. Fabrikat: '..................................................'",
     "quantity": 1.0,
-    "unit": "Stk",
-    "references_id": "1.1.10"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.2.15",
     "description": "*** Bedarfsposition ohne GB wie Vorposition, jedoch mit Holztürblatt *** Bedarfsposition ohne GB\nwie Vorposition, jedoch mit Holztürblatt",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.2.25"
+    "references_id": "1.2.10"
   },
   {
     "ref_no": "1.2.20",
     "description": "wie Pos. 10, jedoch b = 1,01 m (Stahlbetonwand), Einbauort: Serverraum EG wie Pos. 10,  jedoch b = 1,01 m (Stahlbetonwand), Einbauort: Serverraum EG",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.1.10"
+    "references_id": "1.2.10"
   },
   {
     "ref_no": "1.2.25",
     "description": "*** Bedarfsposition ohne GB wie Vorposition, jedoch mit Holztürblatt *** Bedarfsposition ohne GB\nwie Vorposition, jedoch mit Holztürblatt",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.2.15"
+    "references_id": "1.2.20"
   },
   {
     "ref_no": "1.2.30",
     "description": "wie Pos. 10, jedoch b = 1,135 m, Einbauort: Techn. OG wie Pos. 10, jedoch b = 1,135 m, Einbauort: Techn. OG wie Pos. 10,  jedoch b = 1,135 m, Einbauort: Techn. OG\nwie Pos. 10,  jedoch b = 1,135 m, Einbauort: Techn. OG",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.1.10"
+    "references_id": "1.2.10"
   },
   {
     "ref_no": "1.2.35",
     "description": "*** Bedarfsposition ohne GB\nwie Vorposition, jedoch mit Holztürblatt *** Bedarfsposition ohne GB wie Vorposition, jedoch mit Holztürblatt",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.2.15"
+    "references_id": "1.2.30"
   },
   {
     "ref_no": "1.2.40",
     "description": "2-flgl. Stahltür, T30 RS, RBLM b/h = 1,385 x 2,135 m, liefern und montieren, Einbauort: \nHaustechnik EG,\nHörmann Stahl-Feuerschutztür H3 OD, 30-2 FSA  od. glw.\n2-flügliges, feuerhemmendes, einbaufertiges Element (Seitenteil \nzum Feststellen), Durchgang i.L. 1,0 m,\ngeprüft und bauaufsichtlich zugelassen,\nmit Umweltproduktdeklaration (EPD) nach ISO14025 und \nprEN15804 ift Rosenheim EPD-MT-0.1.1\nZulassungs-Nr. DIBT: Z-6.20-2203\nEinbruchschutz: RC2  \n65 mm dicke, doppelwandige, vollflächig verklebte Verbund-\nkonstruktion aus verzinktem Material mit planebener Ober-\nfläche, \nStahlsicherungsbolzen im Falzbereich gemäß zulassungs-\ntechnischer Anforderung,\nOberfläche: grundiert (umweltfreundlich pulverbeschichtet) in \nAnlehnung an RAL 9002, Grauweiß \nAnschlag: DIN links \nBänder: dreiteilig, 1 Federband mit Kugellager, 1 Konstruk-\ntionsband mit Kugellager,\nDrückergarnitur: Edelstahl,\nBaukörper-Anschlüsse: \nSturzbereich Stahlbeton, seitlich Stahlbeton \ninkl. Obertürschließer mit Gleitschiene und SFR,\nnach DIN EN 1154\nangebot. Fabrikat: '..................................................' 2-flgl. Stahltür, T30 RS, RBLM b/h = 1,385 x 2,135 m, liefern und montieren, Einbauort: Haustechnik EG, Hörmann Stahl-Feuerschutztür H3 OD, 30-2 FSA od. glw. 2-flügliges, feuerhemmendes, einbaufertiges Element (Seitenteil zum Feststellen), Durchgang i.L. 1,0 m, geprüft und bauaufsichtlich zugelassen, mit Umweltproduktdeklaration (EPD) nach ISO14025 und prEN15804 ift Rosenheim EPD-MT-0.1.1 Zulassungs-Nr. DIBT: Z-6.20-2203 Einbruchschutz: RC2 65 mm dicke, doppelwandige, vollflächig verklebte Verbundkonstruktion aus verzinktem Material mit planebener Oberfläche, Stahlsicherungsbolzen im Falzbereich gemäß zulassungs-technischer Anforderung, Oberfläche: grundiert (umweltfreundlich pulverbeschichtet) in Anlehnung an RAL 9002, Grauweiß Anschlag: DIN links Bänder: dreiteilig, 1 Federband mit Kugellager, 1 Konstruk-tionsband mit Kugellager, Drückergarnitur: Edelstahl, Baukörper-Anschlüsse: Sturzbereich Stahlbeton, seitlich Stahlbeton inkl. Obertürschließer mit Gleitschiene und SFR, nach DIN EN 1154 angebot. Fabrikat: '..................................................'",
     "quantity": 1.0,
     "unit": "Stk",
-    "references_id": "1.2.30"
+    "references_id": "1.2.10"
   },
   {
     "ref_no": "1.2.50",
@@ -220,35 +214,31 @@
     "ref_no": "1.2.60",
     "description": "*** Bedarfsposition ohne GB\nZulage für verschraubte Boden-Türpuffer,\nliefern und montieren nach Angabe BL,\nangebot. Fabrikat: '....................................................' *** Bedarfsposition ohne GB Zulage für verschraubte Boden-Türpuffer, liefern und montieren nach Angabe BL, angebot. Fabrikat: '....................................................'",
     "quantity": 1.0,
-    "unit": "Stk",
-    "references_id": "1.1.190"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.3.10",
     "description": "Türelement, 1-flüglig, RBML: b/h = 1,01 x 2,32 m, T30 RS, Alu-RR-Feuerschutztür HE 311 (Hörmann od. glw.) mit Glasausschnitt und Umfassungszarge, 1-flügliges, feuerhemmendes und rauchdichtes, einbaufertiges Element, geprüft und bauaufsichtlich zugelassen nach Zulassungs-DIBT: Z-6.20-1898, großflächig verglaste, feuerhemmende, rauchdichte Tür, Aluminiumrohrrahmen aus stranggepressten Profilen mit glasfaserverstärkten Polyamidstegen, Flügelrahmen auf Bandseite flächenbündig mit der Stahlzarge, Glashalteleisten einseitig geklemmt, Beschläge im Türfalz bündig mit den sichtbaren Thelesolleisten (Brandschutzmaterial) eingebaut, vierseitig umlaufende, beidseitige Glasfalzdichtung sowie Anschlagdichtung beidseitig Blend- und Flügelrahmen, Bautiefe: 80 mm Ansichten: Flügel im lichten Zargendurchgang: 95 mm Sockelhöhe Flügel: 105 mm Schließmittel: Türschließer nach DIN EN 1154 Anschlag: DIN rechts Oberfläche Türflügel: pulverbeschichtet, bzw. eloxiert RAL 7016 Baukörper-Anschlüsse: Sturzbereich: Stahlbeton Seitlich: Stahlbeton Boden: Zementestrich weitere Leistungseigenschaften: - rauchdicht gemäß DIN 18095-3/EN1634-3 mit absenkbarer Bodendichtung - schalldämmend - einbruchhemmend Umfassungszarge, steck-schraubbar, verzinkt, grundiert und endbeschichtet RAL 7016, MW: 200 mm angebot. Fabrikat: '.................................................' Einbauort: TrH EG+OG Alutüren\nTürelement, 1-flüglig, RBML: b/h = 1,01 x 2,32 m, T30 RS,\nAlu-RR-Feuerschutztür HE 311 (Hörmann od. glw.) mit \nGlasausschnitt und Umfassungszarge,\n1-flügliges, feuerhemmendes und rauchdichtes, \neinbaufertiges Element,\ngeprüft und bauaufsichtlich zugelassen nach\nZulassungs-DIBT: Z-6.20-1898,\ngroßflächig verglaste, feuerhemmende, rauchdichte Tür,\nAluminiumrohrrahmen aus stranggepressten Profilen mit \nglasfaserverstärkten Polyamidstegen,\nFlügelrahmen auf Bandseite flächenbündig mit der Stahlzarge,\nGlashalteleisten einseitig geklemmt,\nBeschläge im Türfalz bündig mit den sichtbaren Thelesolleisten \n(Brandschutzmaterial) eingebaut,\nvierseitig umlaufende, beidseitige Glasfalzdichtung sowie \nAnschlagdichtung beidseitig Blend- und Flügelrahmen,\nBautiefe:  80 mm\nAnsichten: Flügel im lichten Zargendurchgang:  95 mm\nSockelhöhe Flügel: 105 mm\nSchließmittel:  Türschließer nach DIN EN 1154\nAnschlag: DIN rechts\nOberfläche Türflügel: pulverbeschichtet, bzw. eloxiert RAL 7016\n\nBaukörper-Anschlüsse:\nSturzbereich: Stahlbeton\nSeitlich: Stahlbeton\nBoden: Zementestrich\n\nweitere Leistungseigenschaften:\n- rauchdicht gemäß DIN 18095-3/EN1634-3 mit absenkbarer \n  Bodendichtung\n- schalldämmend\n- einbruchhemmend\n\nUmfassungszarge, steck-schraubbar, verzinkt, grundiert\nund endbeschichtet RAL 7016, MW: 200 mm\n\nangebot. Fabrikat: '.................................................'\n\nEinbauort: TrH EG+OG",
     "quantity": 0.0,
-    "unit": "Stk",
-    "references_id": "1.1.50"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.3.20",
     "description": "Zulage für E-Öffner Zulage für E-Öffner\nZulage für E-Öffner",
     "quantity": 2.0,
-    "unit": "Stk",
-    "references_id": "1.3.20"
+    "unit": "Stk"
   },
   {
     "ref_no": "1.4.10",
     "description": "Wartung Brandschutz Stahltür pro Jahr inkl. An-/Abfahrt und Dokumentation Auftrag über 5 Jahre inkl. An- und Abfahrt sowie Fahrzeugkostenpauschale bei 4 Türen",
     "quantity": 0,
-    "unit": "Stk",
-    "references_id": null
+    "unit": "Stk"
   },
   {
     "ref_no": "1.4.30",
     "description": "Wartung Brandschutz Alutüren pro Jahr inkl. An-/Abfahrt und Dokumentation über 5 Jahre inkl. An-/Abfahrt und Dokumentation",
     "quantity": 4,
-    "unit": "Stk",
-    "references_id": "1.4.10"
+    "unit": "Stk"
   }
 ]
+
