@@ -55,10 +55,10 @@ class Pipelines:
             # Store processed data in the database
             # self.mongo_db_repo.store_data(user_id, collection_id, parsed_items)
 
+            # TODO: vector db input
+
             # self.vector_db_repo.store_data(user_id, collection_id, parsed_items)
             # self.llm_service.categorize()
-
-
 
             return {
                 "status": "success",
