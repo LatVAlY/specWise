@@ -1,4 +1,6 @@
 
+from core.app.services.processing.data_processing import DataProcessingService
+from core.app.processing.vectore_client import VectoreDatabaseClient, url as qdrant_url
 from app.services.processing.data_processing import DataProcessingService
 
 
@@ -6,7 +8,7 @@ class Pipelines:
     """ the whole pipline for the document processing and creation"""
     def __init__(self):
         # self.mongo_db_repo = MongoDbRepository()
-        # self.vector_db_repo = VectorDbRepository()
+        self.vector_db_service = VectoreDatabaseClient(url=qdrant_url)
         # self.llm_service = OpenAILlmService()
 
         self.data_processing_service = DataProcessingService()
@@ -54,10 +56,8 @@ class Pipelines:
             parsed_items = self.data_processing_service.process_data(pages)
             # Store processed data in the database
             # self.mongo_db_repo.store_data(user_id, collection_id, parsed_items)
-
-            # TODO: vector db input
-
-            # self.vector_db_repo.store_data(user_id, collection_id, parsed_items)
+               
+            self.vector_db_repo.store_data(user_id, collection_id, parsed_items)
             # self.llm_service.categorize()
 
             return {

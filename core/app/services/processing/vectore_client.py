@@ -2,18 +2,22 @@ import json
 from langchain_qdrant import Qdrant
 from langchain_core.documents import Document
 from qdrant_client import QdrantClient
-
 from qdrant_client.http.models import Distance, VectorParams
 from langchain_openai import OpenAIEmbeddings
-
+from dataclasses import dataclass
+from uuid import uuid4
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
+from core.app.models.models import ItemDto
+
+url = "http://localhost:6333"  # Qdrant URL
+
+
 # Load environment variables from .env file
 load_dotenv()
-api_key = os.getenv("OPENROUTER_API_KEY")
-
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 class VectoreDatabaseClient:
     """
@@ -26,8 +30,11 @@ class VectoreDatabaseClient:
         self.client = QdrantClient(url=self.url)
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
         self.openai_client = OpenAI(
-            base_url="https://openrouter.ai/api/v1", api_key=api_key
+            base_url="https://openrouter.ai/api/v1", api_key=openai_api_key
         )
+        self.embeddings = OpenAIEmbeddings(
+            api_key=openai_api_key,
+            model="text-embedding-3-large")
 
     def transfer_str_to_documents(self, docs: list[str]) -> list[Document]:
         """convert a list of strings to a list of documents"""
@@ -74,6 +81,22 @@ class VectoreDatabaseClient:
             return docs
         except Exception as e:
             print(f"Error querying collection: {e}")
+            raise e
+
+    def store_data(self, user_id, collection_id: str, data):
+        """ store data in a vector collection for the client """
+        try:
+            docs = [str(filter(lambda attr, _: attr != "classification_item",
+                               vars(item).items())) for item in data]
+            print(docs)
+            documents = self.transfer_str_to_documents(docs)
+            _ = Qdrant.from_documents(
+                            documents,
+                            embedding=self.embeddings,
+                            url=self.url,
+                            collection_name=collection_id)
+        except Exception as e:
+            print(f"Error storing data: {e}")
             raise e
 
 
