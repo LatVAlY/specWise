@@ -1,3 +1,4 @@
+from app.models.models import ItemDto
 import json
 from langchain_qdrant import Qdrant
 from langchain_core.documents import Document
@@ -90,12 +91,11 @@ class VectoreDatabaseClient:
             print(f"Error querying collection: {e}")
             raise e
 
-    def store_data(self, user_id, collection_id: str, data):
+    def store_data(self, user_id: str, collection_id: str, data: ItemDto):
         """ store data in a vector collection for the client """
         try:
             docs = [str(filter(lambda attr, _: attr != "classification_item",
                                vars(item).items())) for item in data]
-            print(docs)
             documents = self.transfer_str_to_documents(docs)
             _ = Qdrant.from_documents(
                             documents,
