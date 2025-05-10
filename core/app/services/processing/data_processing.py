@@ -7,6 +7,8 @@ from pdfminer.layout import LTTextContainer
 
 from app.services.mongo_db import MongoDBService
 
+import logging
+logger = logging.getLogger(__name__)
 
 class DataProcessingService:
     def __init__(self):
@@ -37,7 +39,9 @@ class DataProcessingService:
 
     def process_data(self, pages, task_id):
         parsed_items: List[ItemChunkDto] = []
-        for i, page_window in self.get_page_windows(pages, window_size=2):
+        for i, page_window in self.get_page_windows(pages, window_size=10):
+            if i > 5:
+                break
             print(f"🧠 Parsing pages {i+1}-{i+2} / {len(pages)}")
             self.mongoDbService.update_task_status(
                 task_id=UUID(task_id),
@@ -54,7 +58,7 @@ class DataProcessingService:
 
         seen = {}
         final_items = []
-
+        logger.info(f"Parsed {len(parsed_items)} items")
         for item in parsed_items:
             ref = item.ref_no.strip()
             desc = item.description.strip()
@@ -67,5 +71,5 @@ class DataProcessingService:
                 if desc not in existing_desc:
                     merged = f"{existing_desc.strip()} {desc}".strip()
                     seen[ref].description = merged
-
+        logger.info(f"Final items: {len(final_items)}")
         return final_items

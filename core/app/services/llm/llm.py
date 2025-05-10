@@ -24,6 +24,7 @@ class OpenAILlmService:
     def categorize(self, json_list: List[ItemChunkDto], task_id) -> List[ItemDto]:
         items: List[ItemDto] = []
         for entry in enumerate(json_list):
+            logger.info(f"entry: {entry}")
             self.mongo_db_service.update_task_status(
                 task_id=UUID(task_id),
                 status=TaskStatus.in_progress,
@@ -45,6 +46,8 @@ class OpenAILlmService:
                     logger.info(f"Answer JSON: {answer_json}")
                     if "items" in answer_json:
                         for item in answer_json["items"]:
+                            # make the keys lower case
+                            item = {k.lower(): v for k, v in item.items()}
                             item_dto = ItemDto(
                                 sku=str(item.get("sku")),
                                 name=item.get("name"),
