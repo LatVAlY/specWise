@@ -17,17 +17,22 @@ class OpenAILlmService:
 
     def categorize(self, json_list: List) -> Dict[int, Tuple[str, str]]:
         for i, entry in enumerate(json_list):
+            if entry["reference_id"] is not None:
+                for parent_chunk in json_list:
+                    if parent_chunk["reference_id"] is not None and parent_chunk["ref_no"] == entry["reference_id"]:
+                        long_text_of_parent = entry["description"] + parent_chunk["description"]
+
             dict_chunk_to_response = {}
             completion = self.openaiClient.chat.completions.create(
                 model="openai/gpt-4o-mini",
                     messages=[
                     {
-                        "role": "user",
+                        "role": "system",
                         "content": CATEGORIZATION_PROMPT
                     },
                     {
-                        "role": "system",
-                        "content": f"This is the content: {entry}"
+                        "role": "user",
+                        "content": f"This is the content: {entry}.\nUse the following description to match the sku number and for every other data we asked you, you dismiss the following, longer description: {long_text_of_parent}"
                     }
                     ]
                 ,
