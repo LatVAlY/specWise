@@ -1,5 +1,5 @@
 import json
-from langchain_qdrant import QdrantVectorStore, RetrievalMode
+from langchain_qdrant import Qdrant
 from langchain_core.documents import Document
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
@@ -10,68 +10,69 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-from core.app.models.models import ItemDto
-
-url = "http://localhost:6333"  # Qdrant URL
-
-
-# Load environment variables from .env file
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
-openai_client = OpenAI(api_key=openai_api_key)
-
-
-@dataclass
 class VectoreDatabaseClient:
     """
-        everything about the vectore database client,
-        create, update, delete and search
+    everything about the vectore database client,
+    create, update, delete and search
     """
-    url: str
 
-    def __post_init__(self):
-        self.client = QdrantClient(
-            url=self.url
+    def __init__(self):
+        self.url = "localhost:6333"
+        self.client = QdrantClient(url=self.url)
+        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+        self.openai_client = OpenAI(
+            base_url="https://openrouter.ai/api/v1", api_key=openai_api_key
         )
         self.embeddings = OpenAIEmbeddings(
             api_key=openai_api_key,
             model="text-embedding-3-large")
 
     def transfer_str_to_documents(self, docs: list[str]) -> list[Document]:
-        """ convert a list of strings to a list of documents """
+        """convert a list of strings to a list of documents"""
         return [Document(page_content=doc, metadata={}) for doc in docs]
 
-    def create_collection(self, docs: list[str]) -> str:
-        """ create a vector collection for the client """
+    def create_collection(self, collection_id: str, items: list[str]):
+        """create a vector collection for the client"""
         try:
-            collection_id = str(uuid4())
-            self.client.create_collection(
+            docs = self.transfer_str_to_documents(items)
+            # create a collection with the uid
+            exist = self.client.collection_exists(collection_id)
+            if not exist:
+                self.client.recreate_collection(
+                    collection_name=collection_id,
+                    vectors_config=VectorParams(
+                        size=3072,
+                        distance=Distance.COSINE,
+                    ),
+                )
+                print(f"Collection {docs} created")
+            vector_store = Qdrant.from_documents(
+                docs,
+                self.embeddings,
+                url=self.url,
+                prefer_grpc=False,
                 collection_name=collection_id,
-                vectors_config=VectorParams(size=4,
-                                            distance=Distance.DOT))
-            documents = self.transfer_str_to_documents(docs)
-            _ = QdrantVectorStore.from_documents(
-                            documents=documents,
-                            embedding=self.embeddings,
-                            retrieval_mode=RetrievalMode.DENSE,
-                            url=self.url,
-                            collection_name=collection_id
-                        )
-            return collection_id
+                force_recreate=False,
+            )
+            vector_store.add_documents(docs)
+
         except Exception as e:
             print(f"Error creating collection: {e}")
             raise e
 
     def query_collection(self, collection_name: str, query: str) -> str:
-        """ query a vector collection for the client """
+        """query a vector collection for the client"""
         try:
-            qdrant = QdrantVectorStore(
+            qdrant = Qdrant(
                 client=self.client,
-                collection_name=collection_name
+                collection_name=collection_name,
+                embedding=self.embeddings,
             )
             docs = qdrant.similarity_search(query)
-            return json.dumps(docs, default=lambda x: x.__dict__, indent=4)
+            return docs
         except Exception as e:
             print(f"Error querying collection: {e}")
             raise e
@@ -83,7 +84,7 @@ class VectoreDatabaseClient:
                                vars(item).items())) for item in data]
             print(docs)
             documents = self.transfer_str_to_documents(docs)
-            _ = QdrantVectorStore.from_documents(
+            _ = Qdrant.from_documents(
                             documents,
                             embedding=self.embeddings,
                             url=self.url,
@@ -94,9 +95,10 @@ class VectoreDatabaseClient:
 
 
 if __name__ == "__main__":
-    vectore = VectoreDatabaseClient(url="localhost:6333")
+    vectore = VectoreDatabaseClient()
+    collection_id = "15135346-2baa-45fc-9786-b66ee81b0b2f"
     collection_name = vectore.create_collection(
-        ["hello world", "hello world 2"])
-    print(vectore.query_collection(collection_name, "hello world"))
-    vectore.store_data("user_id", collection_name, [
-        ItemDto(ref_no="123", description="test", quantity=1, unit="kg")])
+        collection_id=collection_id, items=["hello world", "hello world 2"]
+    )
+    # print(f"Collection name: {collection_name}")
+    print(vectore.query_collection(collection_name=collection_id, query="hello"))

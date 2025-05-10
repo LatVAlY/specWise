@@ -1,0 +1,24 @@
+import { FileUpload } from "@/components/file-upload"
+import { TasksTable } from "@/components/tasks-table"
+import { TasksInitializer } from "@/components/tasks-initializer"
+
+export default function Home() {
+  return (
+    <div className="space-y-8">
+      <TasksInitializer />
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold">SPECWISE File Processor</h1>
+        <p className="text-muted-foreground">Upload files for processing and view task status</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-1">
+          <FileUpload />
+        </div>
+        <div className="md:col-span-2">
+          <TasksTable />
+        </div>
+      </div>
+    </div>
+  )
+}

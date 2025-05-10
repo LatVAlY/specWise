@@ -1,3 +1,4 @@
+import datetime
 import uuid
 from pathlib import Path
 from typing import List
@@ -17,7 +18,7 @@ from app.constants import ALLOWED_EXTENSIONS
 from app.envirnoment import config
 from app.models.validator import return_generic_http_error, return_http_error
 from app.services.mongo_db import MongoDBService
-from app.utils.file_utils import save_file
+from app.utils.file_utils import get_current_time_in_timezone, save_file
 
 logger = logging.getLogger(__name__)
 
@@ -29,12 +30,6 @@ dataRouter = APIRouter(
 )
 
 
-@dataRouter.post(
-    "/",
-    name="Upload Data",
-    response_model=List[TaskDto],
-    operation_id="upload_data",
-)
 def generate_collection_id():
     """
     Generate a unique collection ID.
@@ -42,10 +37,16 @@ def generate_collection_id():
     return str(uuid.uuid4())
 
 
+@dataRouter.post(
+    "/",
+    name="Upload Data",
+    response_model=List[TaskDto],
+    operation_id="upload_data",
+)
 async def load_data(
     files: List[UploadFile] = File(...),
-    db: MongoDBService = Depends(MongoDBService()),
 ):
+    db = MongoDBService()
     for f in files:
         logger.info(f"received {f.filename} ")
     try:
@@ -73,16 +74,17 @@ async def load_data(
             task_dto = TaskDto(
                 id=task_id,
                 collection_id=collection_id,
-                file_path=str(file_path),
-                filename=file.filename,
-                status=TaskStatus.PENDING,
+                file_name=file.filename,
+                status=TaskStatus.pending,
+                created_at=get_current_time_in_timezone(),
             )
+            logger.info(f"Saving file {file.filename} to {file_path}")
             db.insert_task(task=task_dto)
             run_file_data_processing.apply_async(
                 args=[
                     task_id,
                     str(collection_id),
-                    file_path,
+                    str(file_path),
                     str(file.filename),
                 ]
             )
@@ -94,6 +96,7 @@ async def load_data(
             status_code=400, content=jsonable_encoder({"detail": "FILE_ALREADY_EXISTS"})
         )
     except Exception as e:
+        logger.info(f"Error uploading files: {e}")
         logger.error(e)
         return return_generic_http_error()
 
@@ -115,32 +118,3 @@ def test_rabbitmq_connection():
         connection.close()
     except Exception as e:
         raise Exception("RabbitMQ connection failed") from e
-
-
-@dataRouter.get(
-    "/task/files", response_model=list[TaskDto], operation_id="get_files_by_task_ids"
-)
-async def get_task_ids(
-    task_ids: list[str] = Query(...),
-):
-    try:
-        # get tasks from MongoDB
-        task_service = TaskService()
-        return await task_service.get_multiple_tasks_by_ids(
-            list(map(uuid.UUID, task_ids))
-        )
-    except Exception as e:
-        logger.error(e)
-        return return_generic_http_error()
-
-
-@dataRouter.delete(
-    "/task", response_model=ErrorBaseResponse, operation_id="cancel_task_by_task_id"
-)
-async def cancel_task_id(task_id: str):
-    try:
-        task_result = AsyncResult(task_id, app=run_file_data_processing.app)
-        task_result.revoke(terminate=True)
-    except Exception as e:
-        logger.error(e)
-        return return_generic_http_error()
