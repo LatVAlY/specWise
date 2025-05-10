@@ -1,5 +1,4 @@
 import logging
-from multiprocessing.pool import AsyncResult
 from typing import List, Optional
 from uuid import UUID
 from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
@@ -9,7 +8,8 @@ from app.services.mongo_db import MongoDBService
 from app.models.models import FileModel, TaskDto, TaskStatus
 from app.celery_tasks.tasks import run_file_data_processing
 from app.models.validator import return_generic_http_error
-
+from app.worker import app
+from celery.result import AsyncResult
 
 logger = logging.getLogger(__name__)
 

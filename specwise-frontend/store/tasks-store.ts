@@ -1,36 +1,44 @@
-import { create } from "zustand"
-import type { TaskDto } from "@/types/api"
+import { create } from "zustand";
+import type { TaskDto } from "@/types/api";
+import { log } from "console";
 
 interface TasksState {
-  activeTasks: TaskDto[]
-  addTask: (task: TaskDto) => void
-  addTasks: (tasks: TaskDto[]) => void
-  removeTask: (taskId: string) => void
-  updateTask: (taskId: string, updates: Partial<TaskDto>) => void
-  clearTasks: () => void
+  activeTasks: TaskDto[];
+  addTask: (task: TaskDto) => void;
+  addTasks: (tasks: TaskDto[]) => void;
+  removeTask: (taskId: string) => void;
+  updateTask: (taskId: string, updates: Partial<TaskDto>) => void;
+  clearTasks: () => void;
 }
 
 export const useTasksStore = create<TasksState>((set) => ({
   activeTasks: [],
   addTask: (task) =>
     set((state) => ({
-      activeTasks: state.activeTasks.some((t) => t.id === task.id) ? state.activeTasks : [...state.activeTasks, task],
+      activeTasks: state.activeTasks.some((t) => t.id === task.id)
+        ? state.activeTasks
+        : [...state.activeTasks, task],
     })),
   addTasks: (tasks) =>
     set((state) => {
-      const existingTaskIds = new Set(state.activeTasks.map((t) => t.id))
-      const newTasks = tasks.filter((task) => !existingTaskIds.has(task.id))
+      const existingTaskIds = new Set(state.activeTasks.map((t) => t.id));
+      const newTasks = tasks.filter((task) => !existingTaskIds.has(task.id));
       return {
         activeTasks: [...state.activeTasks, ...newTasks],
-      }
+      };
     }),
   removeTask: (taskId) =>
-    set((state) => ({
-      activeTasks: state.activeTasks.filter((task) => task.id !== taskId),
-    })),
+    set((state) => {
+      console.log("Removing task with ID:", taskId);
+      return {
+        activeTasks: state.activeTasks.filter((task) => task.id !== taskId),
+      };
+    }),
   updateTask: (taskId, updates) =>
     set((state) => ({
-      activeTasks: state.activeTasks.map((task) => (task.id === taskId ? { ...task, ...updates } : task)),
+      activeTasks: state.activeTasks.map((task) =>
+        task.id === taskId ? { ...task, ...updates } : task
+      ),
     })),
   clearTasks: () => set({ activeTasks: [] }),
-}))
+}));
