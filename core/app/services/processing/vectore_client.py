@@ -10,10 +10,6 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-from core.app.models.models import ItemDto
-
-url = "http://localhost:6333"  # Qdrant URL
-
 
 # Load environment variables from .env file
 load_dotenv()
