@@ -4,13 +4,13 @@ from langchain_core.documents import Document
 from qdrant_client import QdrantClient
 from qdrant_client.http.models import Distance, VectorParams
 from langchain_openai import OpenAIEmbeddings
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from uuid import uuid4
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-# from core.app.models.models import ItemDto
+from core.app.models.models import ItemDto
 
 url = "http://localhost:6333"  # Qdrant URL
 
@@ -19,8 +19,8 @@ url = "http://localhost:6333"  # Qdrant URL
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
-
 openai_client = OpenAI(api_key=openai_api_key)
+
 
 @dataclass
 class VectoreDatabaseClient:
@@ -29,7 +29,6 @@ class VectoreDatabaseClient:
         create, update, delete and search
     """
     url: str
-    client: QdrantClient = field(init=False)
 
     def __post_init__(self):
         self.client = QdrantClient(
@@ -47,11 +46,10 @@ class VectoreDatabaseClient:
         """ create a vector collection for the client """
         try:
             collection_id = str(uuid4())
-            self.client.create_collection(collection_name=collection_id,
-                                          vectors_config=VectorParams(
-                                              size=3072,
-                                              distance=Distance.COSINE,
-                                          ))
+            self.client.create_collection(
+                collection_name=collection_id,
+                vectors_config=VectorParams(size=4,
+                                            distance=Distance.DOT))
             documents = self.transfer_str_to_documents(docs)
             _ = QdrantVectorStore.from_documents(
                             documents=documents,
@@ -77,7 +75,7 @@ class VectoreDatabaseClient:
         except Exception as e:
             print(f"Error querying collection: {e}")
             raise e
-        
+
     def store_data(self, user_id, collection_id: str, data):
         """ store data in a vector collection for the client """
         try:
@@ -87,7 +85,7 @@ class VectoreDatabaseClient:
             documents = self.transfer_str_to_documents(docs)
             _ = QdrantVectorStore.from_documents(
                             documents,
-                            embeddings,
+                            embedding=self.embeddings,
                             url=self.url,
                             collection_name=collection_id)
         except Exception as e:
@@ -100,5 +98,5 @@ if __name__ == "__main__":
     collection_name = vectore.create_collection(
         ["hello world", "hello world 2"])
     print(vectore.query_collection(collection_name, "hello world"))
-    """vectore.store_data("user_id", collection_name, [
-        ItemDto(ref_no="123", description="test", quantity=1, unit="kg")])"""
+    vectore.store_data("user_id", collection_name, [
+        ItemDto(ref_no="123", description="test", quantity=1, unit="kg")])
