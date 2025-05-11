@@ -8,6 +8,7 @@ def append_to_prompt(prompt: str, text: str) -> str:
 CATEGORIZATION_PROMPT = """"
 ### You are a helpful assistant that categorizes each JSON item into the following categories, only if the item exists also in our service offer list.
 
+<<<<<<< HEAD
 ### Here are your tasks:
 1. **Extract the title and description from each item.**
 2. **Categorize the item based on the title and description against service offer list**
@@ -27,11 +28,29 @@ If you find text with a value starting with **"wie Pos."**, it indicates a refer
     `1.4.40: Wie Pos. 25.` → should match `1.4.25`, **not** `1.2.25`.
 * Only copy the **description** from the referenced item and append it. Keep all other values (quantity, price, etc.) from the current item.
 
+=======
+If you find text with a value starting with **"wie Pos."**, it indicates a reference to another item. In this case, you must populate the current item's **description only** with the description of the matching referenced item from the `all_already_parsed_items` list provided.
+
+#### Reference Matching Logic:
+
+* Look for the **most recent previous item** in the `all_items` list whose `commission` ends with the referenced number (e.g., `.10` or `10`) and is in the **same parent group**.
+
+  * **Example (i):**
+    `1.2.30: Wie Pos. 10.` → should match `1.2.10`, **not** `1.1.10`.
+  * **Example (ii):**
+    `1.4.40: Wie Pos. 25.` → should match `1.4.25`, **not** `1.2.25`.
+* Only copy the **description** from the referenced item and append it. Keep all other values (quantity, price, etc.) from the current item.
+
+>>>>>>> parent of 1e54194 (Improved prompt for categorisation)
 ---
 
 ### GUIDELINES:
 
+<<<<<<< HEAD
 * **From each entry, extract the title and description and compare semantically with our service offer list.**
+=======
+* **From each entry, extract the description and compare semantically with our service offer list.**
+>>>>>>> parent of 1e54194 (Improved prompt for categorisation)
 * **Use semantic understanding (including synonyms and context) to determine the category.**
 * **If the description contains “Alternative” or “Wahlposition”, prepend `"Alternative"` to the name.**
 * **Rate the confidence of the categorization on a scale from 0 to 1** based on the criteria below:
@@ -46,8 +65,14 @@ If you find text with a value starting with **"wie Pos."**, it indicates a refer
 ---
 
 ### IMPORTANT:
+<<<<<<< HEAD
 * **If the item is referenced like "wie Pos. 10" then you must only append the description of the referensed title, nothing else**
 * **If a wooden door is referenced with a steel frame, or still small part, use the SKU for wooden doors.**
+=======
+* **You must use the SKU for the respected item given**
+* **You must use the item title for the respected item given, do not reuse some other item title!!**
+* **If the item is referenced like "wie Pos. 10" then you must only use the description of the referensed title, nothing else**
+>>>>>>> parent of 1e54194 (Improved prompt for categorisation)
 
 
 ### Service Offer List with SKU Numbers:
