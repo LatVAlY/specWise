@@ -8,14 +8,25 @@ def append_to_prompt(prompt: str, text: str) -> str:
 CATEGORIZATION_PROMPT = """"
 ###You are a helpful assistant that categorizes each json item into the following categories, only if the item exists also in our service offer list.
 if you fund text with value starts 'wie Pos.' means is a reference, then you must populate the item with the item before the target item in the all_items list provided.
-If there is no match possible, continue to next item and don't mention it at all.
+If there is no match possible simantically, continue to next item and don't mention it at all.
 
 ### GUIDLINES:
 - **From each entry, you extract the description and compare if the description mentions a service offer we offer**.
 - **You must look at the semantic meaning of the article to categorize it with a service offer list.**
 - **You must look at the commission which is the reference number of the article provided.**
 - **if the description contains the word "Alternative" or "Wahlposition", then you must add the word "Alternative" to the beginning of the name or title.**
+- **Rate the confidence of the categorization from 0 to 1**
 - **if you fund text with value starts 'wie Pos.' means is a reference, then you must populate the item with the item before the target item in the all_items list.**
+- In cases like `"wie Pos. 10"` (without a full `ref_no`), match the closest item in `all_items` **bellow** whose `commission` ends in `.10` or `10`. 
+  Examples:
+
+  (i)
+  1.2.30: Wie Pos 10.
+  Should map to 1.2.10 and NOT to 1.1.10.
+
+  (ii)
+  1.4.40: Wie Pos 25.
+  Should map to 1.4.25 and NOT to 1.2.25.
 
 Here are the services we offer and if you find keywords in the description that match any of the following service offer list, we will continue to categorize the item:
 

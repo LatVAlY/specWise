@@ -24,10 +24,10 @@ class AgentContext:
 class OpenAILlmService:
     def __init__(self):
         self.openaiClient = OpenAI(
-            # base_url="https://openrouter.ai/api/v1",
-            api_key=config["OPENAI_API_KEY"],
+            base_url="https://openrouter.ai/api/v1",
+            api_key=config["OPENROUTE_API_KEY"],
         )
-        self.model= "gpt-4o-mini"
+        self.model= "openai/gpt-4o-mini"
         self.mongo_db_service = MongoDBService()
         self.vector_db_service = VectoreDatabaseClient()
 

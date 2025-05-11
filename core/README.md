@@ -1,17 +1,31 @@
 # 🚀 Koch Service Specification Transformer
 
 ## Starting 
-create .env file
+#### create .env file
 `cp local.env .env`
 Add your OPENROUTE_API_KEY to the .env
+Add your OPENAI_API_KEY to .env
 
-activate envirnment
+#### activate envirnment
 `poetry env activate`
 
-install dependencies
+#### install dependencies
 `poetry install`
 
+#### start docker compose 
+`docker compose up -d`
 
+#### start the server
+`export PROCESS=server`
+`./run.sh`
+
+#### start worker
+`export PROCESS=worker`
+`./run.sh`
+
+
+## Architecure image:
+![Alt text for the image](docs/diagram.png)
 
 ## The Digital Alchemist's Quest
 
