@@ -334,19 +334,19 @@ test_pdf_path = (
 )
 
 if __name__ == "__main__":
-    data_processing = DataProcessingService()
+    # data_processing = DataProcessingService()
 
-    data = data_processing.extract_pages_as_text(test_pdf_path)
-    # write to text file
-    with open(f"test.txt", "w") as f:
-        f.write("\n".join(data)
+    # data = data_processing.extract_pages_as_text(test_pdf_path)
+    # # write to text file
+    # with open(f"test.txt", "w") as f:
+    #     f.write(data)
 
-    # with open(f"parsed_items_example_{example_num}.json", "r", encoding="utf-8") as f:
-    #     items = json.load(f)
+    with open(f"parsed_items_example_{example_num}.json", "r", encoding="utf-8") as f:
+        items = json.load(f)
 
-    # data_expanded = resolve_all_items_one_by_one(items, api_key=api_key)
+    data_expanded = resolve_all_items_one_by_one(items, api_key=api_key)
 
-    # with open(
-    #     f"parsed_items_example_{example_num}_expanded.json", "w", encoding="utf-8"
-    # ) as f:
-    #     json.dump(data_expanded, f, ensure_ascii=False, indent=2)
+    with open(
+        f"parsed_items_example_{example_num}_expanded.json", "w", encoding="utf-8"
+    ) as f:
+        json.dump(data_expanded, f, ensure_ascii=False, indent=2)

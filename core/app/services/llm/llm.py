@@ -24,9 +24,10 @@ class AgentContext:
 class OpenAILlmService:
     def __init__(self):
         self.openaiClient = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=config["OPENROUTE_API_KEY"],
+            # base_url="https://openrouter.ai/api/v1",
+            api_key=config["OPENAI_API_KEY"],
         )
+        self.model= "gpt-4o-mini"
         self.mongo_db_service = MongoDBService()
         self.vector_db_service = VectoreDatabaseClient()
 
@@ -42,7 +43,7 @@ class OpenAILlmService:
             completion = self.openaiClient.chat.completions.create(
                 temperature=0,
                 response_format={"type": "json_object"},
-                model="openai/gpt-4o-mini",
+                model=self.model,
                 messages=[
                     {"role": "system", "content": CATEGORIZATION_PROMPT},
                     {"role": "system", "content": f"This is already parsed items {items} \n This is the next item content: {entry}"},
@@ -81,7 +82,7 @@ class OpenAILlmService:
         return items
 
     async def parse_page_with_llm(
-        self, page_text, model="openai/gpt-4o-mini", max_retries=3
+        self, page_text, max_retries=3
     ) -> ItemChunkDto:
         """
         Parse page text using LLM with retry mechanism for error handling.
@@ -120,7 +121,7 @@ class OpenAILlmService:
                     f"Sending request to LLM (attempt {retry_count + 1}/{max_retries + 1})"
                 )
                 completion = self.openaiClient.chat.completions.create(
-                    model=model,
+                    model=self.model,
                     max_tokens=4096,
                     temperature=0,
                     response_format={"type": "json_object"},

@@ -17,12 +17,12 @@ logger = logging.getLogger(__name__)
 class Pipelines:
     """the whole pipline for the document processing and creation"""
 
-    def __init__(self):
+    def __init__(self, vectorize=False):
         self.vector_db_service = VectoreDatabaseClient()
         self.llm_service = OpenAILlmService()
         self.mongoDbService = MongoDBService()
         self.data_processing_service = DataProcessingService()
-        pass
+        self.vectorize = vectorize
 
     async def process_data_from_file(
         self,
@@ -71,11 +71,11 @@ class Pipelines:
             logger.info(f"Task {task_id} marked as in progress")
 
             pages = self.data_processing_service.extract_pages_as_text(file_path)
-
-            self.vector_db_service.create_collection(
-                collection_id=collection_id,
-                items=pages,
-            )
+            if self.vectorize:
+                self.vector_db_service.create_collection(
+                    collection_id=collection_id,
+                    items=pages,
+                )
 
             parsed_items = await self.data_processing_service.process_data(pages, collection_id=collection_id, task_id=task_id)
 
