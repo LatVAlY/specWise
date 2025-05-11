@@ -42,7 +42,7 @@ class OpenAILlmService:
             )
             prmopt = append_to_prompt(CATEGORIZATION_PROMPT, f"This is already parsed items all_items: {items}")
             completion = self.openaiClient.chat.completions.create(
-                temperature=0,
+                temperature=0.7,
                 response_format={"type": "json_object"},
                 model=self.model,
                 messages=[
@@ -63,10 +63,10 @@ class OpenAILlmService:
                                 sku=str(item.get("sku")),
                                 name=item.get("name"),
                                 text=item.get("text"),
-                                quantity=item.get("quantity"),
-                                quantityunit=item.get("quantityunit"),
-                                price=item.get("price"),
-                                priceunit=item.get("priceunit"),
+                                quantity=item.get("quantity", 0),
+                                quantityunit=item.get("quantityunit", "Sk"),
+                                price=item.get("price", 0),
+                                priceunit=item.get("priceunit", "EURO"),
                                 commission=item.get("commission"),
                                 confidence=item.get("confidence"),
                             )

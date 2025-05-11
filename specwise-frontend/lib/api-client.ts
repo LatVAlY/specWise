@@ -74,5 +74,8 @@ export const dataApi = {
     fetch(`${API_BASE_URL}/data/`, {
       method: "POST",
       body: formData,
+      headers: {
+        "ngrok-skip-browser-warning": "1"
+      },
     }).then((res) => res.json()),
 };

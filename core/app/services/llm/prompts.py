@@ -6,82 +6,84 @@ def append_to_prompt(prompt: str, text: str) -> str:
     return f"{prompt}\n{text}"
 
 CATEGORIZATION_PROMPT = """"
-###You are a helpful assistant that categorizes each json item into the following categories, only if the item exists also in our service offer list.
-if you fund text with value starts 'wie Pos.' means is a reference, then you must populate the item with the item before the target item in the all_items list provided.
-If there is no match possible simantically, continue to next item and don't mention it at all.
+### You are a helpful assistant that categorizes each JSON item into the following categories, only if the item exists also in our service offer list.
 
-### GUIDLINES:
-- **From each entry, you extract the description and compare if the description mentions a service offer we offer**.
-- **You must look at the semantic meaning of the article to categorize it with a service offer list.**
-- **You must look at the commission which is the reference number of the article provided.**
-- **if the description contains the word "Alternative" or "Wahlposition", then you must add the word "Alternative" to the beginning of the name or title.**
-- **Rate the confidence of the categorization from 0 to 1**
-- **if you fund text with value starts 'wie Pos.' means is a reference, then you must populate the item with the item before the target item in the all_items list.**
-- In cases like `"wie Pos. 10"` (without a full `ref_no`), match the closest item in `all_items` **bellow** whose `commission` ends in `.10` or `10`. 
-  Examples:
+If you find text with a value starting with **"wie Pos."**, it indicates a reference to another item. In this case, you must populate the current item's **description only** with the description of the matching referenced item from the `all_already_parsed_items` list provided.
 
-  (i)
-  1.2.30: Wie Pos 10.
-  Should map to 1.2.10 and NOT to 1.1.10.
+#### Reference Matching Logic:
 
-  (ii)
-  1.4.40: Wie Pos 25.
-  Should map to 1.4.25 and NOT to 1.2.25.
+* Look for the **most recent previous item** in the `all_items` list whose `commission` ends with the referenced number (e.g., `.10` or `10`) and is in the **same parent group**.
 
-Here are the services we offer and if you find keywords in the description that match any of the following service offer list, we will continue to categorize the item:
+  * **Example (i):**
+    `1.2.30: Wie Pos. 10.` → should match `1.2.10`, **not** `1.1.10`.
+  * **Example (ii):**
+    `1.4.40: Wie Pos. 25.` → should match `1.4.25`, **not** `1.2.25`.
+* Only copy the **description** from the referenced item and append it. Keep all other values (quantity, price, etc.) from the current item.
 
-### service offer list with sku number:
-- Holztüren, Holzzargen: 620001
-- Stahltüren, Stahlzargen, Rohrrahmentüren: 670001
-- Haustüren: 660001
-- Glastüren: 610001
-- Tore: 680001
-- If the description mentions Türblatt with some other service such as Holztürblatt mit Stahlzarge, then sku: 620001)
-- If the description mentions Verglasungen together with Zarge such as Festverglasungen mit Stahlzarge, then sku: 670001)
-- Beschläge: 240001
-- Türstopper: 330001
-- Lüftungsgitter: 450001
-- Türschließer: 290001
-- Schlösser / E-Öffner: 360001
-- Wartung: DL8110016
-- Stundenlohnarbeiten: DL5010008
-- Sonstige Arbeiten (z.B. Baustelleneinrichtung, Aufmaß, Mustertürblatt, etc.): DL5019990
+---
 
-**If you found a match between the service offer list and the description, we want to categorize the item into the following categories:**
-  - **Do not explain your reasoning, just give us the short answer in the Json (or Json-like format).**
-  - **You must respect the format of the JSON, keys must be lower case.**
-  - **You must return the following JSON format:**
+### GUIDELINES:
+
+* **From each entry, extract the description and compare semantically with our service offer list.**
+* **Use semantic understanding (including synonyms and context) to determine the category.**
+* **If the description contains “Alternative” or “Wahlposition”, prepend `"Alternative"` to the name.**
+* **Rate the confidence of the categorization on a scale from 0 to 1** based on the criteria below:
+
+  * `1.0`: Exact match from service offer
+  * `0.8`: Strong synonym or phrase-level match
+  * `0.5`: Weak or partial semantic match
+  * `< 0.5`: Unclear or insufficient match (skip the item)
+* **If no match is found, skip the item without mention.**
+* **If dimensions (e.g., “750 x 2.125 mm”) appear in the description, append them in parentheses to the `name`.**
+* **If required fields (e.g., description or commission) are missing, skip the item entirely. Optional fields may be set to null.**
+---
+
+### IMPORTANT:
+* **You must use the SKU for the respected item given**
+* **You must use the item title for the respected item given, do not reuse some other item title!!**
+* **If the item is referenced like "wie Pos. 10" then you must only use the description of the referensed title, nothing else**
+
+
+### Service Offer List with SKU Numbers:
+
+* **Holztüren, Holzzargen**: `620001`
+* **Stahltüren, Stahlzargen, Rohrrahmentüren**: `670001`
+* **Haustüren**: `660001`
+* **Glastüren**: `610001`
+* **Tore**: `680001`
+* If the description includes combinations like **“Holztürblatt mit Stahlzarge”**, then use `620001`.
+* If the description includes **“Verglasung mit Stahlzarge”**, then use `670001`.
+* **Beschläge**: `240001`
+* **Türstopper**: `330001`
+* **Lüftungsgitter**: `450001`
+* **Türschließer**: `290001`
+* **Schlösser / E-Öffner**: `360001`
+* **Wartung**: `DL8110016`
+* **Stundenlohnarbeiten**: `DL5010008`
+* **Sonstige Arbeiten (e.g., Baustelleneinrichtung, Aufmaß, Mustertürblatt, etc.)**: `DL5019990`
+
+---
+
+### Output Format:
+
+Return your result in the following JSON structure. Use lowercase keys exactly as shown:
+
 {
   "items": [
     {
-      "sku": string,
+      "sku": "string",
       "name": "string",
       "text": "string",
-      "quantity": float,
-      "quantityunit": "string"
-      "price": float
-      "priceunit": "string"
-      "commission": "string"
+      "quantity": int default 0,
+      "quantityunit": "string" default "Stk",
+      "price": float default 0,
+      "priceunit": "string" default "EUR",
+      "commission": "string",
       "confidence": float
     },
     ...
   ]
 }
-
-- **if the description contains the word "Alternative" or "Wahlposition", then you must add the word "Alternative" to the beginning of the name or title.**
-
-
-### Here is the explanation for the different categories:
-- items: **The items included in the offer, represented as an array. Each item is an object with the following properties:**
-  - sku: **The SKU of the item, corresponding to the article numbers from the Service offer list.**
-  - name: **The name of the item. also add dimentions to the item name like (750 x 2.125 mm)**
-  - text: **The description of the item.**
-  - quantity: **The quantity of the item.**
-  - quantityUnit: **The unit of measurement for the quantity.**
-  - price: **The price of the item.**
-  - priceUnit: **The unit of measurement for the price.**
-  - commission: **The article number that was provided in a format x.x.x, or x.x (example LV-POS. 1.1.1, LV-POS. 4.3).**
-  - confidence: **The confidence level of the categorization, represented as a float between 0 and 1.**
 
 """
 
