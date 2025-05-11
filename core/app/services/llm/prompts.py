@@ -1,5 +1,13 @@
+
+def append_to_prompt(prompt: str, text: str) -> str:
+    """
+    Append text to the prompt and return the updated prompt.
+    """
+    return f"{prompt}\n{text}"
+
 CATEGORIZATION_PROMPT = """"
 ###You are a helpful assistant that categorizes each json item into the following categories, only if the item exists also in our service offer list.
+if you fund text with value starts 'wie Pos.' means is a reference, then you must populate the item with the item before the target item in the all_items list provided.
 If there is no match possible, continue to next item and don't mention it at all.
 
 ### GUIDLINES:
@@ -7,6 +15,7 @@ If there is no match possible, continue to next item and don't mention it at all
 - **You must look at the semantic meaning of the article to categorize it with a service offer list.**
 - **You must look at the commission which is the reference number of the article provided.**
 - **if the description contains the word "Alternative" or "Wahlposition", then you must add the word "Alternative" to the beginning of the name or title.**
+- **if you fund text with value starts 'wie Pos.' means is a reference, then you must populate the item with the item before the target item in the all_items list.**
 
 Here are the services we offer and if you find keywords in the description that match any of the following service offer list, we will continue to categorize the item:
 

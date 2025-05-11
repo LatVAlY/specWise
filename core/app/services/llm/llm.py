@@ -5,7 +5,7 @@ from uuid import UUID
 
 from agents import Agent, FunctionTool, ModelSettings, RunContextWrapper, Runner
 from langchain_qdrant import Qdrant
-from app.services.llm.prompts import CATEGORIZATION_PROMPT, SYSTEM_PROMPT_LLM_CHUNKING
+from app.services.llm.prompts import CATEGORIZATION_PROMPT, SYSTEM_PROMPT_LLM_CHUNKING, append_to_prompt
 from app.models.models import ItemDto, ItemChunkDto, TaskStatus
 from openai import OpenAI
 from app.envirnoment import config
@@ -40,13 +40,14 @@ class OpenAILlmService:
                 status=TaskStatus.in_progress,
                 description=f"Categorizing item {entry[0] + 1} / {len(json_list)}",
             )
+            prmopt = append_to_prompt(CATEGORIZATION_PROMPT, f"This is already parsed items all_items: {items}")
             completion = self.openaiClient.chat.completions.create(
                 temperature=0,
                 response_format={"type": "json_object"},
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": CATEGORIZATION_PROMPT},
-                    {"role": "system", "content": f"This is already parsed items {items} \n This is the next item content: {entry}"},
+                    {"role": "system", "content": prmopt},
+                    {"role": "system", "content": f" This is the next item content: {entry}"},
                 ],
             )
             answer_string = completion.choices[0].message.content
