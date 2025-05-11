@@ -38,7 +38,7 @@ export PROCESS=worker
 
 
 ## Architecure image:
-![Alt text for the image](docs/diagram.png)
+![Alt text for the image](core/docs/diagram.png)
 
 ## The Digital Alchemist's Quest
 
