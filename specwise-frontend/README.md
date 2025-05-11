@@ -1,5 +1,4 @@
-# SpecWise Frontend
-
+# SpecWise Frontend 
 ## Overview
 SpecWise is a frontend application designed to [briefly describe the purpose of your application, e.g., manage tasks, provide insights, etc.].
 
