@@ -42,7 +42,7 @@ class OpenAILlmService:
             )
             prmopt = append_to_prompt(CATEGORIZATION_PROMPT, f"This is already parsed items all_items: {items}")
             completion = self.openaiClient.chat.completions.create(
-                temperature=0.7,
+                temperature=0.2,
                 response_format={"type": "json_object"},
                 model=self.model,
                 messages=[

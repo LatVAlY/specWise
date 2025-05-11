@@ -8,6 +8,13 @@ def append_to_prompt(prompt: str, text: str) -> str:
 CATEGORIZATION_PROMPT = """"
 ### You are a helpful assistant that categorizes each JSON item into the following categories, only if the item exists also in our service offer list.
 
+### Here are your tasks:
+1. **Extract the title and description from each item.**
+2. **Categorize the item based on the title and description against service offer list**
+3. **Constract the JSON**
+4. **Safely populate the JSON with consideration of mentioned bellow**
+
+
 If you find text with a value starting with **"wie Pos."**, it indicates a reference to another item. In this case, you must populate the current item's **description only** with the description of the matching referenced item from the `all_already_parsed_items` list provided.
 
 #### Reference Matching Logic:
@@ -24,7 +31,7 @@ If you find text with a value starting with **"wie Pos."**, it indicates a refer
 
 ### GUIDELINES:
 
-* **From each entry, extract the description and compare semantically with our service offer list.**
+* **From each entry, extract the title and description and compare semantically with our service offer list.**
 * **Use semantic understanding (including synonyms and context) to determine the category.**
 * **If the description contains “Alternative” or “Wahlposition”, prepend `"Alternative"` to the name.**
 * **Rate the confidence of the categorization on a scale from 0 to 1** based on the criteria below:
@@ -39,9 +46,8 @@ If you find text with a value starting with **"wie Pos."**, it indicates a refer
 ---
 
 ### IMPORTANT:
-* **You must use the SKU for the respected item given**
-* **You must use the item title for the respected item given, do not reuse some other item title!!**
-* **If the item is referenced like "wie Pos. 10" then you must only use the description of the referensed title, nothing else**
+* **If the item is referenced like "wie Pos. 10" then you must only append the description of the referensed title, nothing else**
+* **If a wooden door is referenced with a steel frame, or still small part, use the SKU for wooden doors.**
 
 
 ### Service Offer List with SKU Numbers:
