@@ -4,7 +4,7 @@ import json
 import os
 import requests
 
-# from core.app.services.processing.data_processing import DataProcessing
+from app.services.processing.data_processing import DataProcessingService
 
 
 # api_key = os.getenv("OPENROUTER_API_KEY")
@@ -330,20 +330,23 @@ def resolve_all_items_one_by_one(items, api_key):
 api_key = os.getenv("OPENROUTER_API_KEY")
 example_num = 1
 test_pdf_path = (
-    f"app/docs/data-for-participants/Example-{example_num}/service-specification.pdf"
+    f"/Users/abdel_latrache/IdeaProjects/projects/specWise/core/docs/data-for-participants/Example-2/service-specification.pdf"
 )
 
 if __name__ == "__main__":
-    # data_processing = DataProcessing()
+    data_processing = DataProcessingService()
 
-    # data = data_processing.process_data(test_pdf_path)
+    data = data_processing.extract_pages_as_text(test_pdf_path)
+    # write to text file
+    with open(f"test.txt", "w") as f:
+        f.write("\n".join(data)
 
-    with open(f"parsed_items_example_{example_num}.json", "r", encoding="utf-8") as f:
-        items = json.load(f)
+    # with open(f"parsed_items_example_{example_num}.json", "r", encoding="utf-8") as f:
+    #     items = json.load(f)
 
-    data_expanded = resolve_all_items_one_by_one(items, api_key=api_key)
+    # data_expanded = resolve_all_items_one_by_one(items, api_key=api_key)
 
-    with open(
-        f"parsed_items_example_{example_num}_expanded.json", "w", encoding="utf-8"
-    ) as f:
-        json.dump(data_expanded, f, ensure_ascii=False, indent=2)
+    # with open(
+    #     f"parsed_items_example_{example_num}_expanded.json", "w", encoding="utf-8"
+    # ) as f:
+    #     json.dump(data_expanded, f, ensure_ascii=False, indent=2)

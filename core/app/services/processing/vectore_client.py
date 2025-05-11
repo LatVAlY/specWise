@@ -39,16 +39,14 @@ class VectoreDatabaseClient:
         try:
             docs = self.transfer_str_to_documents(items)
             # create a collection with the uid
-            exist = self.client.collection_exists(collection_id)
-            if not exist:
-                self.client.recreate_collection(
-                    collection_name=collection_id,
-                    vectors_config=VectorParams(
-                        size=3072,
-                        distance=Distance.COSINE,
-                    ),
-                )
-                print(f"Collection {docs} created")
+
+            self.client.recreate_collection(
+                collection_name=collection_id,
+                vectors_config=VectorParams(
+                    size=3072,
+                    distance=Distance.COSINE,
+                ),
+            )
             vector_store = Qdrant.from_documents(
                 docs,
                 self.embeddings,
@@ -62,16 +60,31 @@ class VectoreDatabaseClient:
         except Exception as e:
             print(f"Error creating collection: {e}")
             raise e
-
-    def query_collection(self, collection_name: str, query: str) -> str:
+    def add_documents(self, collection_id: str, items: list[str]):
+        """add documents to a vector collection for the client"""
+        try:
+            docs = self.transfer_str_to_documents(items)
+            vector_store = Qdrant.from_documents(
+                docs,
+                self.embeddings,
+                url=self.url,
+                prefer_grpc=False,
+                collection_name=collection_id,
+                force_recreate=False,
+            )
+            vector_store.add_documents(docs)
+        except Exception as e:
+            print(f"Error adding documents: {e}")
+            raise e
+    def query_collection(self, collection_name: str, query: str, k=5) -> str:
         """query a vector collection for the client"""
         try:
             qdrant = Qdrant(
                 client=self.client,
                 collection_name=collection_name,
-                embedding=self.embeddings,
+                embeddings=self.embeddings,
             )
-            docs = qdrant.similarity_search(query)
+            docs = qdrant.similarity_search(query, k=k)
             return docs
         except Exception as e:
             print(f"Error querying collection: {e}")

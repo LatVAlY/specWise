@@ -14,7 +14,7 @@ class DataProcessingService:
     def __init__(self):
         self.llm_service = OpenAILlmService()
         self.mongoDbService = MongoDBService()
-
+    
     def extract_pages_as_text(self, pdf_path: str):
         pages = []
         for page_layout in extract_pages(pdf_path):
@@ -37,21 +37,21 @@ class DataProcessingService:
                 chunk += f"\n\n### PAGE {page_num}\n{pages[i + j]}"
             yield (i, chunk)
 
-    def process_data(self, pages, task_id):
+    async def process_data(self, pages, collection_id, task_id):
         parsed_items: List[ItemChunkDto] = []
+        
         for i, page_window in self.get_page_windows(pages, window_size=10):
-            if i > 5:
-                break
             print(f"🧠 Parsing pages {i+1}-{i+2} / {len(pages)}")
-            self.mongoDbService.update_task_status(
-                task_id=UUID(task_id),
-                status=TaskStatus.in_progress,
-                description=f"Parsing pages {i+1}-{i+2} / {len(pages)}",
-            )
-            try:
-                response: List[ItemChunkDto] = self.llm_service.parse_page_with_llm(
-                    page_window
+            if task_id:
+                self.mongoDbService.update_task_status(
+                    task_id=UUID(task_id),
+                    status=TaskStatus.in_progress,
+                    description=f"Parsing pages {i+1}-{i+2} / {len(pages)}",
                 )
+                response: List[ItemChunkDto] = await self.llm_service.parse_page_with_llm(
+                    page_window,
+                )
+            try:
                 parsed_items.extend(response)
             except Exception as e:
                 print(f"❌ Failed at pages {i+1}-{i+2}: {e}")

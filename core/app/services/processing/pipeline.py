@@ -24,7 +24,7 @@ class Pipelines:
         self.data_processing_service = DataProcessingService()
         pass
 
-    def process_data_from_file(
+    async def process_data_from_file(
         self,
         user_id: str,
         collection_id: str,
@@ -72,7 +72,12 @@ class Pipelines:
 
             pages = self.data_processing_service.extract_pages_as_text(file_path)
 
-            parsed_items = self.data_processing_service.process_data(pages, task_id=task_id)
+            self.vector_db_service.create_collection(
+                collection_id=collection_id,
+                items=pages,
+            )
+
+            parsed_items = await self.data_processing_service.process_data(pages, collection_id=collection_id, task_id=task_id)
 
             items_dto: List[ItemDto] = self.llm_service.categorize(parsed_items, task_id)
 

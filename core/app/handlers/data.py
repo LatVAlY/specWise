@@ -8,7 +8,7 @@ from app.models.models import TaskDto, TaskStatus
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 import pika
-from fastapi import APIRouter, UploadFile, File, Query
+from fastapi import APIRouter, Form, UploadFile, File, Query
 from app.celery_tasks.tasks import (
     run_file_data_processing,
 )
@@ -43,6 +43,7 @@ def generate_collection_id():
 )
 async def load_data(
     files: List[UploadFile] = File(...),
+    customer_id: str = Form(...) # Add this line
 ):
     db = MongoDBService()
     for f in files:
@@ -81,7 +82,7 @@ async def load_data(
             logger.info(f"in collection: {collection_id}")
             run_file_data_processing.apply_async(
                 args=[
-                    "test",
+                    customer_id,
                     collection_id,
                     file.filename,
                     task_id,

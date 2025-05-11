@@ -1,6 +1,10 @@
+from dataclasses import dataclass
 import json
-from typing import List, Dict, Tuple
+from typing import List, Dict, Optional, Tuple
 from uuid import UUID
+
+from agents import Agent, FunctionTool, ModelSettings, RunContextWrapper, Runner
+from langchain_qdrant import Qdrant
 from app.services.llm.prompts import CATEGORIZATION_PROMPT, SYSTEM_PROMPT_LLM_CHUNKING
 from app.models.models import ItemDto, ItemChunkDto, TaskStatus
 from openai import OpenAI
@@ -9,10 +13,14 @@ from app.envirnoment import config
 import logging
 
 from app.services.mongo_db import MongoDBService
+from app.services.processing.vectore_client import VectoreDatabaseClient
 
 logger = logging.getLogger(__name__)
 
-
+@dataclass
+class AgentContext:
+    collection_id: str
+    already_parsed_items: Optional[list] = None
 class OpenAILlmService:
     def __init__(self):
         self.openaiClient = OpenAI(
@@ -20,6 +28,7 @@ class OpenAILlmService:
             api_key=config["OPENROUTE_API_KEY"],
         )
         self.mongo_db_service = MongoDBService()
+        self.vector_db_service = VectoreDatabaseClient()
 
     def categorize(self, json_list: List[ItemChunkDto], task_id) -> List[ItemDto]:
         items: List[ItemDto] = []
@@ -36,7 +45,7 @@ class OpenAILlmService:
                 model="openai/gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": CATEGORIZATION_PROMPT},
-                    {"role": "system", "content": f"This is the content: {entry}"},
+                    {"role": "system", "content": f"This is already parsed items {items} \n This is the next item content: {entry}"},
                 ],
             )
             answer_string = completion.choices[0].message.content
@@ -61,8 +70,17 @@ class OpenAILlmService:
                             )
                             items.append(item_dto)
         return items
+    
+    async def query_collection(self, ctx: RunContextWrapper[AgentContext], query: str) -> List[ItemChunkDto]:
+        results = self.vector_db_service.query_collection(
+            query=query,
+            collection_name=ctx.context.collection_id,
+            k=5,
+        )
+        items = [doc.page_content for doc in results]
+        return items
 
-    def parse_page_with_llm(
+    async def parse_page_with_llm(
         self, page_text, model="openai/gpt-4o-mini", max_retries=3
     ) -> ItemChunkDto:
         """

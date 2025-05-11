@@ -1,9 +1,10 @@
+import asyncio
 import logging
 from celery.exceptions import MaxRetriesExceededError
 import os
 import sys
 
-from app.envirnoment import config
+from celery import Task
 from app.services.processing.pipeline import Pipelines
 from app.worker import app
 
@@ -13,9 +14,25 @@ pipelines = Pipelines()
 
 logger = logging.getLogger(__name__)
 
+class AsyncTaskBase(Task):
+    def run_async(self, coro):
+        loop = asyncio.get_event_loop()
+        if loop.is_closed():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+        return loop.run_until_complete(coro)
 
-@app.task(bind=True)
-def run_file_data_processing(self, user_id: str, collection_id: str, filename: str, task_id: str):
+    def __call__(self, *args, **kwargs):
+        try:
+            if asyncio.iscoroutinefunction(self.run):
+                return self.run_async(self.run(*args, **kwargs))
+            return super().__call__(*args, **kwargs)
+        except Exception as exc:
+            # Log error appropriately
+            raise
+
+@app.task(bind=True, base=AsyncTaskBase)
+async def run_file_data_processing(self, user_id: str, collection_id: str, filename: str, task_id: str):
     """
     Process data from an uploaded file asynchronously as a Celery task.
     
@@ -49,7 +66,7 @@ def run_file_data_processing(self, user_id: str, collection_id: str, filename: s
     try:
         logger.info(f"Processing file: {filename} for user: {user_id} in collection: {collection_id}")
         # Call the pipeline's process_data_from_file method to handle the file processing
-        return pipelines.process_data_from_file(
+        return await pipelines.process_data_from_file(
             user_id=user_id,
             collection_id=collection_id,
             filename=filename,
